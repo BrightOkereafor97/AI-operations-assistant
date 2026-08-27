@@ -1,0 +1,21 @@
+ticket_id,customer,category,priority,status,owner,summary
+TKT-001,Northstar Foods,Access,High,Open,Amina Bello,User cannot sign in after a password reset.
+TKT-002,BluePeak Logistics,Billing,Medium,In Progress,David Cole,Customer reports an incorrect invoice amount.
+TKT-003,GreenField Retail,Technical,Critical,Open,Sarah James,Production dashboard is unavailable.
+TKT-004,Horizon Media,Account,Low,Resolved,Michael Ade,Customer requested an account email update.
+TKT-005,Silverline Health,Technical,High,In Progress,Amina Bello,API integration returns authentication errors.
+TKT-006,Nova Learning,Billing,Medium,Open,David Cole,Payment appears twice on the customer's statement.
+TKT-007,Summit Energy,Access,High,Resolved,Sarah James,Administrator was locked out of the portal.
+TKT-008,OakBridge Consulting,Feature,Low,Open,Michael Ade,Customer requested bulk export capability.
+TKT-009,MetroWorks,Technical,Critical,In Progress,Amina Bello,Customer data synchronization has stopped.
+TKT-010,BrightPath Finance,Security,High,Open,Sarah James,Suspicious login activity was reported.
+TKT-011,Cedar Homes,Account,Medium,Resolved,David Cole,User profile information required correction.
+TKT-012,Atlas Manufacturing,Technical,High,Open,Michael Ade,Automated report generation is failing.
+TKT-013,ClearWater Services,Billing,Low,Resolved,David Cole,Customer requested a copy of an old invoice.
+TKT-014,Vertex Mobility,Technical,Medium,In Progress,Amina Bello,Mobile application notifications are delayed.
+TKT-015,Pioneer Legal,Access,Medium,Open,Sarah James,New employee cannot access shared workspace.
+TKT-016,Urban Harvest,Feature,Low,Open,Michael Ade,Customer requested additional dashboard filters.
+TKT-017,Apex Insurance,Security,Critical,In Progress,Sarah James,Possible unauthorized account access detected.
+TKT-018,GoldenGate Travel,Billing,Medium,Resolved,David Cole,Customer asked about a failed subscription renewal.
+TKT-019,PrimeEdge Systems,Technical,High,Open,Amina Bello,Webhook events are not reaching the customer server.
+TKT-020,LakeView Hospitality,Account,Low,Resolved,Michael Ade,Customer requested closure of an unused user account.

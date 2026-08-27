@@ -1,0 +1,16 @@
+claim_id,employee,category,amount,date,status
+EXP-001,Ada Martin,Travel,18500,2026-08-01,Approved
+EXP-002,John Bello,Meals,7200,2026-08-02,Approved
+EXP-003,Mary Cole,Hotel,45000,2026-08-03,Pending
+EXP-004,Peter James,Transport,9500,2026-08-04,Approved
+EXP-005,Grace Obi,Training,30000,2026-08-05,Pending
+EXP-006,David King,Meals,6500,2026-08-06,Approved
+EXP-007,Sarah Ade,Software,22000,2026-08-07,Approved
+EXP-008,Michael Hart,Travel,17500,2026-08-08,Rejected
+EXP-009,Tola Green,Hotel,52000,2026-08-09,Pending
+EXP-010,James White,Transport,8400,2026-08-10,Approved
+EXP-011,Helen Stone,Meals,5800,2026-08-11,Approved
+EXP-012,Daniel Ford,Equipment,68000,2026-08-12,Pending
+EXP-013,Lucy Brown,Travel,21000,2026-08-13,Approved
+EXP-014,Mark Reed,Software,15500,2026-08-14,Approved
+EXP-015,Ruth Adams,Transport,7600,2026-08-15,Approved
