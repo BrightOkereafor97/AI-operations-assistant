@@ -1,0 +1,2 @@
+total_requests,ticket_requests,no_tool_requests,tool_selection_accuracy,argument_accuracy,unnecessary_tool_call_rate,overall_pass_rate
+12,10,2,0.9166666666666666,0.2,0.5,0.25

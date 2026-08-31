@@ -1,0 +1,2 @@
+model,experiment,total_requests,ticket_requests,no_tool_requests,tool_selection_accuracy,argument_accuracy,unnecessary_tool_call_rate,overall_pass_rate
+google/flan-t5-base,V4_two_pass_router_and_argument_extraction,12,10,2,0.3333333333333333,0.2,0.0,0.3333333333333333

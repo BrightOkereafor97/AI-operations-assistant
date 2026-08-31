@@ -1,0 +1,13 @@
+request_id,user_request,expected_tool_requested,expected_tool_name,expected_ticket_id
+S2-001,What is happening with ticket TKT-005?,1,get_ticket,TKT-005
+S2-002,Check support case #3 for me.,1,get_ticket,TKT-003
+S2-003,Can you pull up TKT-019?,1,get_ticket,TKT-019
+S2-004,Who owns ticket 10?,1,get_ticket,TKT-010
+S2-005,What is the current status of support ticket TKT-014?,1,get_ticket,TKT-014
+S2-006,Show me the details for case 7.,1,get_ticket,TKT-007
+S2-007,Look up ticket number 12.,1,get_ticket,TKT-012
+S2-008,I need the priority and owner for TKT-017.,1,get_ticket,TKT-017
+S2-009,Please check what happened on support case 2.,1,get_ticket,TKT-002
+S2-010,Find ticket 20 and tell me its status.,1,get_ticket,TKT-020
+S2-011,What is our annual leave policy?,0,,
+S2-012,Add 32000 hotel and 8500 transport.,0,,
