@@ -93,6 +93,45 @@ def get_ticket(ticket_id):
     )
 
 
+def get_expense_claim(claim_id):
+
+    if claim_id is None:
+        raise ValueError(
+            "claim_id cannot be empty."
+        )
+
+    claim_id = (
+        str(claim_id)
+        .strip()
+        .upper()
+    )
+
+    if not claim_id:
+        raise ValueError(
+            "claim_id cannot be empty."
+        )
+
+    with EXPENSES_FILE.open(
+        "r",
+        encoding="utf-8"
+    ) as file:
+
+        reader = csv.DictReader(file)
+
+        for claim in reader:
+
+            if (
+                claim["claim_id"]
+                .strip()
+                .upper()
+                == claim_id
+            ):
+                return claim
+
+    raise KeyError(
+        f"Expense claim '{claim_id}' was not found."
+    )
+
 # ================================================================
 # TOOL 2 — CALCULATE EXPENSE
 # ================================================================

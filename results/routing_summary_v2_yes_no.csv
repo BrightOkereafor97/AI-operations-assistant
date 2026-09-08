@@ -1,0 +1,2 @@
+model,total_requests,tool_selection_accuracy,argument_accuracy,unnecessary_tool_call_rate,task_completion_rate
+google/flan-t5-base,30,0.5333333333333333,0.4583333333333333,0.16666666666666666,0.5333333333333333

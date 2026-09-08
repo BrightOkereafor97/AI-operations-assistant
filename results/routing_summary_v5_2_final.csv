@@ -1,0 +1,2 @@
+model,experiment,total_requests,tool_selection_accuracy,argument_accuracy,unnecessary_tool_call_rate,task_completion_rate
+google/flan-t5-base,V5_2_guardrail_plus_explicit_id_preservation,30,1.0,1.0,0.0,1.0
