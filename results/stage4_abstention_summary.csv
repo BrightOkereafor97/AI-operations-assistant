@@ -1,0 +1,7 @@
+metric,value
+requests,16
+abstention_decision_accuracy,75.0
+false_abstentions,0
+false_answers,4
+lowest_answerable_score,0.5253217220306396
+highest_unsupported_score,0.5641816854476929
