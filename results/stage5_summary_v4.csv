@@ -1,0 +1,2 @@
+experiment,requests,exact_plan_accuracy,required_tool_coverage,first_argument_accuracy,unnecessary_tool_call_rate,dependency_success_rate,structural_task_completion
+Stage5_V4_dependency_chaining,12,100.0,100.0,100.0,0.0,100.0,100.0
