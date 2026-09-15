@@ -1,0 +1,402 @@
+[
+  {
+    "test_id": "STATE-001",
+    "description": "Independent ticket and knowledge tools",
+    "state_valid": true,
+    "validation_errors": [],
+    "state": {
+      "user_request": "Check ticket TKT-005 and tell me what the company escalation policy says.",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check ticket TKT-005 and tell me what the company escalation policy says."
+        },
+        {
+          "role": "assistant",
+          "content": "Validated tool plan: get_ticket -> search_company_knowledge"
+        },
+        {
+          "role": "tool",
+          "content": "get_ticket returned: {'ticket_id': 'TKT-005', 'customer': 'Silverline Health', 'category': 'Technical', 'priority': 'High', 'status': 'In Progress', 'owner': 'Amina Bello', 'summary': 'API integration returns authentication errors.'}"
+        },
+        {
+          "role": "tool",
+          "content": "search_company_knowledge returned: {'question': 'What does the company escalation policy say?', 'answer': 'not change the original support priority unless the impact assessment also changes.', 'sources': ['support_escalation_process.txt'], 'chunks': ['support_escalation_process_medium_001'], 'evidence': ['Escalation does not change the original support priority unless the impact assessment also changes.'], 'retrieval_scores': [0.5646662712097168], 'retrieval_details': [{'document_name': 'support_escalation_process.txt', 'chunk_id': 'support_escalation_process_medium_001', 'evidence': 'Escalation does not change the original support priority unless the impact assessment also changes.', 'chunk_similarity': 0.6401036977767944, 'sentence_similarity': 0.5646662712097168, 'adjusted_evidence_score': 0.5646662712097168, 'version': '2.1', 'status': 'Current'}], 'abstained': False, 'retrieval_mode': 'standard', 'conflict': None}"
+        },
+        {
+          "role": "assistant",
+          "content": "Ticket TKT-005 is In Progress. Priority: High. Owner: Amina Bello. Summary: API integration returns authentication errors. Company knowledge: not change the original support priority unless the impact assessment also changes."
+        }
+      ],
+      "tool_calls": [
+        {
+          "call_id": 1,
+          "step": 1,
+          "tool": "get_ticket",
+          "argument": "TKT-005",
+          "used_prior_result": false,
+          "dependency_note": null
+        },
+        {
+          "call_id": 2,
+          "step": 2,
+          "tool": "search_company_knowledge",
+          "argument": "What does the company escalation policy say?",
+          "used_prior_result": false,
+          "dependency_note": null
+        }
+      ],
+      "tool_results": [
+        {
+          "call_id": 1,
+          "tool": "get_ticket",
+          "result": {
+            "ticket_id": "TKT-005",
+            "customer": "Silverline Health",
+            "category": "Technical",
+            "priority": "High",
+            "status": "In Progress",
+            "owner": "Amina Bello",
+            "summary": "API integration returns authentication errors."
+          }
+        },
+        {
+          "call_id": 2,
+          "tool": "search_company_knowledge",
+          "result": {
+            "question": "What does the company escalation policy say?",
+            "answer": "not change the original support priority unless the impact assessment also changes.",
+            "sources": [
+              "support_escalation_process.txt"
+            ],
+            "chunks": [
+              "support_escalation_process_medium_001"
+            ],
+            "evidence": [
+              "Escalation does not change the original support priority unless the impact assessment also changes."
+            ],
+            "retrieval_scores": [
+              0.5646662712097168
+            ],
+            "retrieval_details": [
+              {
+                "document_name": "support_escalation_process.txt",
+                "chunk_id": "support_escalation_process_medium_001",
+                "evidence": "Escalation does not change the original support priority unless the impact assessment also changes.",
+                "chunk_similarity": 0.6401036977767944,
+                "sentence_similarity": 0.5646662712097168,
+                "adjusted_evidence_score": 0.5646662712097168,
+                "version": "2.1",
+                "status": "Current"
+              }
+            ],
+            "abstained": false,
+            "retrieval_mode": "standard",
+            "conflict": null
+          }
+        }
+      ],
+      "step_count": 2,
+      "errors": [],
+      "final_answer": "Ticket TKT-005 is In Progress. Priority: High. Owner: Amina Bello. Summary: API integration returns authentication errors. Company knowledge: not change the original support priority unless the impact assessment also changes."
+    }
+  },
+  {
+    "test_id": "STATE-002",
+    "description": "Dependent ticket to knowledge chain",
+    "state_valid": true,
+    "validation_errors": [],
+    "state": {
+      "user_request": "Check TKT-003 and tell me what response target applies to its priority.",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check TKT-003 and tell me what response target applies to its priority."
+        },
+        {
+          "role": "assistant",
+          "content": "Validated tool plan: get_ticket -> search_company_knowledge"
+        },
+        {
+          "role": "tool",
+          "content": "get_ticket returned: {'ticket_id': 'TKT-003', 'customer': 'GreenField Retail', 'category': 'Technical', 'priority': 'Critical', 'status': 'Open', 'owner': 'Sarah James', 'summary': 'Production dashboard is unavailable.'}"
+        },
+        {
+          "role": "tool",
+          "content": "search_company_knowledge returned: {'question': 'What response target applies to Critical priority support requests?', 'answer': 'an initial response within one business day', 'sources': ['support_service_levels.txt'], 'chunks': ['support_service_levels_medium_001'], 'evidence': ['Normal-priority requests receive an initial response within one business day.'], 'retrieval_scores': [0.6106905937194824], 'retrieval_details': [{'document_name': 'support_service_levels.txt', 'chunk_id': 'support_service_levels_medium_001', 'evidence': 'Normal-priority requests receive an initial response within one business day.', 'chunk_similarity': 0.7123782634735107, 'sentence_similarity': 0.6106905937194824, 'adjusted_evidence_score': 0.6106905937194824, 'version': '3.0', 'status': 'Current'}], 'abstained': False, 'retrieval_mode': 'standard', 'conflict': None}"
+        },
+        {
+          "role": "assistant",
+          "content": "Ticket TKT-003 is Open. Priority: Critical. Owner: Sarah James. Summary: Production dashboard is unavailable. Company knowledge: an initial response within one business day"
+        }
+      ],
+      "tool_calls": [
+        {
+          "call_id": 1,
+          "step": 1,
+          "tool": "get_ticket",
+          "argument": "TKT-003",
+          "used_prior_result": false,
+          "dependency_note": null
+        },
+        {
+          "call_id": 2,
+          "step": 2,
+          "tool": "search_company_knowledge",
+          "argument": "What response target applies to Critical priority support requests?",
+          "used_prior_result": true,
+          "dependency_note": "Used ticket priority 'Critical' from the previous tool result."
+        }
+      ],
+      "tool_results": [
+        {
+          "call_id": 1,
+          "tool": "get_ticket",
+          "result": {
+            "ticket_id": "TKT-003",
+            "customer": "GreenField Retail",
+            "category": "Technical",
+            "priority": "Critical",
+            "status": "Open",
+            "owner": "Sarah James",
+            "summary": "Production dashboard is unavailable."
+          }
+        },
+        {
+          "call_id": 2,
+          "tool": "search_company_knowledge",
+          "result": {
+            "question": "What response target applies to Critical priority support requests?",
+            "answer": "an initial response within one business day",
+            "sources": [
+              "support_service_levels.txt"
+            ],
+            "chunks": [
+              "support_service_levels_medium_001"
+            ],
+            "evidence": [
+              "Normal-priority requests receive an initial response within one business day."
+            ],
+            "retrieval_scores": [
+              0.6106905937194824
+            ],
+            "retrieval_details": [
+              {
+                "document_name": "support_service_levels.txt",
+                "chunk_id": "support_service_levels_medium_001",
+                "evidence": "Normal-priority requests receive an initial response within one business day.",
+                "chunk_similarity": 0.7123782634735107,
+                "sentence_similarity": 0.6106905937194824,
+                "adjusted_evidence_score": 0.6106905937194824,
+                "version": "3.0",
+                "status": "Current"
+              }
+            ],
+            "abstained": false,
+            "retrieval_mode": "standard",
+            "conflict": null
+          }
+        }
+      ],
+      "step_count": 2,
+      "errors": [],
+      "final_answer": "Ticket TKT-003 is Open. Priority: Critical. Owner: Sarah James. Summary: Production dashboard is unavailable. Company knowledge: an initial response within one business day"
+    }
+  },
+  {
+    "test_id": "STATE-003",
+    "description": "Dependent claim to calculation chain",
+    "state_valid": true,
+    "validation_errors": [],
+    "state": {
+      "user_request": "Get the amount on EXP-010 and add 7200 to it.",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Get the amount on EXP-010 and add 7200 to it."
+        },
+        {
+          "role": "assistant",
+          "content": "Validated tool plan: get_expense_claim -> calculate_expense"
+        },
+        {
+          "role": "tool",
+          "content": "get_expense_claim returned: {'claim_id': 'EXP-010', 'employee': 'James White', 'category': 'Transport', 'amount': '8400', 'date': '2026-08-10', 'status': 'Approved'}"
+        },
+        {
+          "role": "tool",
+          "content": "calculate_expense returned: 15600.0"
+        },
+        {
+          "role": "assistant",
+          "content": "Expense claim EXP-010 was submitted by James White. Amount: 8400. Status: Approved. Calculated expense total: 15600.0"
+        }
+      ],
+      "tool_calls": [
+        {
+          "call_id": 1,
+          "step": 1,
+          "tool": "get_expense_claim",
+          "argument": "EXP-010",
+          "used_prior_result": false,
+          "dependency_note": null
+        },
+        {
+          "call_id": 2,
+          "step": 2,
+          "tool": "calculate_expense",
+          "argument": [
+            8400.0,
+            7200.0
+          ],
+          "used_prior_result": true,
+          "dependency_note": "Used expense-claim amount 8400.0 from the previous tool result."
+        }
+      ],
+      "tool_results": [
+        {
+          "call_id": 1,
+          "tool": "get_expense_claim",
+          "result": {
+            "claim_id": "EXP-010",
+            "employee": "James White",
+            "category": "Transport",
+            "amount": "8400",
+            "date": "2026-08-10",
+            "status": "Approved"
+          }
+        },
+        {
+          "call_id": 2,
+          "tool": "calculate_expense",
+          "result": 15600.0
+        }
+      ],
+      "step_count": 2,
+      "errors": [],
+      "final_answer": "Expense claim EXP-010 was submitted by James White. Amount: 8400. Status: Approved. Calculated expense total: 15600.0"
+    }
+  },
+  {
+    "test_id": "STATE-004",
+    "description": "Three-tool request",
+    "state_valid": true,
+    "validation_errors": [],
+    "state": {
+      "user_request": "Check TKT-005, add 32000 and 8500, and tell me what our escalation policy says.",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check TKT-005, add 32000 and 8500, and tell me what our escalation policy says."
+        },
+        {
+          "role": "assistant",
+          "content": "Validated tool plan: get_ticket -> calculate_expense -> search_company_knowledge"
+        },
+        {
+          "role": "tool",
+          "content": "get_ticket returned: {'ticket_id': 'TKT-005', 'customer': 'Silverline Health', 'category': 'Technical', 'priority': 'High', 'status': 'In Progress', 'owner': 'Amina Bello', 'summary': 'API integration returns authentication errors.'}"
+        },
+        {
+          "role": "tool",
+          "content": "calculate_expense returned: 40500.0"
+        },
+        {
+          "role": "tool",
+          "content": "search_company_knowledge returned: {'question': 'What does our escalation policy say?', 'answer': 'not change the original support priority unless the impact assessment also changes.', 'sources': ['support_escalation_process.txt'], 'chunks': ['support_escalation_process_medium_001'], 'evidence': ['Escalation does not change the original support priority unless the impact assessment also changes.'], 'retrieval_scores': [0.5121284127235413], 'retrieval_details': [{'document_name': 'support_escalation_process.txt', 'chunk_id': 'support_escalation_process_medium_001', 'evidence': 'Escalation does not change the original support priority unless the impact assessment also changes.', 'chunk_similarity': 0.5889297127723694, 'sentence_similarity': 0.5121284127235413, 'adjusted_evidence_score': 0.5121284127235413, 'version': '2.1', 'status': 'Current'}], 'abstained': False, 'retrieval_mode': 'standard', 'conflict': None}"
+        },
+        {
+          "role": "assistant",
+          "content": "Ticket TKT-005 is In Progress. Priority: High. Owner: Amina Bello. Summary: API integration returns authentication errors. Calculated expense total: 40500.0 Company knowledge: not change the original support priority unless the impact assessment also changes."
+        }
+      ],
+      "tool_calls": [
+        {
+          "call_id": 1,
+          "step": 1,
+          "tool": "get_ticket",
+          "argument": "TKT-005",
+          "used_prior_result": false,
+          "dependency_note": null
+        },
+        {
+          "call_id": 2,
+          "step": 2,
+          "tool": "calculate_expense",
+          "argument": [
+            32000.0,
+            8500.0
+          ],
+          "used_prior_result": false,
+          "dependency_note": null
+        },
+        {
+          "call_id": 3,
+          "step": 3,
+          "tool": "search_company_knowledge",
+          "argument": "What does our escalation policy say?",
+          "used_prior_result": false,
+          "dependency_note": null
+        }
+      ],
+      "tool_results": [
+        {
+          "call_id": 1,
+          "tool": "get_ticket",
+          "result": {
+            "ticket_id": "TKT-005",
+            "customer": "Silverline Health",
+            "category": "Technical",
+            "priority": "High",
+            "status": "In Progress",
+            "owner": "Amina Bello",
+            "summary": "API integration returns authentication errors."
+          }
+        },
+        {
+          "call_id": 2,
+          "tool": "calculate_expense",
+          "result": 40500.0
+        },
+        {
+          "call_id": 3,
+          "tool": "search_company_knowledge",
+          "result": {
+            "question": "What does our escalation policy say?",
+            "answer": "not change the original support priority unless the impact assessment also changes.",
+            "sources": [
+              "support_escalation_process.txt"
+            ],
+            "chunks": [
+              "support_escalation_process_medium_001"
+            ],
+            "evidence": [
+              "Escalation does not change the original support priority unless the impact assessment also changes."
+            ],
+            "retrieval_scores": [
+              0.5121284127235413
+            ],
+            "retrieval_details": [
+              {
+                "document_name": "support_escalation_process.txt",
+                "chunk_id": "support_escalation_process_medium_001",
+                "evidence": "Escalation does not change the original support priority unless the impact assessment also changes.",
+                "chunk_similarity": 0.5889297127723694,
+                "sentence_similarity": 0.5121284127235413,
+                "adjusted_evidence_score": 0.5121284127235413,
+                "version": "2.1",
+                "status": "Current"
+              }
+            ],
+            "abstained": false,
+            "retrieval_mode": "standard",
+            "conflict": null
+          }
+        }
+      ],
+      "step_count": 3,
+      "errors": [],
+      "final_answer": "Ticket TKT-005 is In Progress. Priority: High. Owner: Amina Bello. Summary: API integration returns authentication errors. Calculated expense total: 40500.0 Company knowledge: not change the original support priority unless the impact assessment also changes."
+    }
+  }
+]

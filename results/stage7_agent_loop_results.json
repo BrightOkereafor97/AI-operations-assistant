@@ -1,0 +1,475 @@
+[
+  {
+    "test_id": "LOOP-001",
+    "description": "Independent two-tool request reaches READY",
+    "evaluation": {
+      "state_valid": true,
+      "validation_errors": [],
+      "expected_stop_reason": "READY",
+      "actual_stop_reason": "READY",
+      "stop_reason_correct": true,
+      "stayed_within_limit": true,
+      "passed": true
+    },
+    "state": {
+      "user_request": "Check ticket TKT-005 and tell me what the company escalation policy says.",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check ticket TKT-005 and tell me what the company escalation policy says."
+        },
+        {
+          "role": "assistant",
+          "content": "Validated tool plan: get_ticket -> search_company_knowledge"
+        },
+        {
+          "role": "tool",
+          "content": "get_ticket returned: {'ticket_id': 'TKT-005', 'customer': 'Silverline Health', 'category': 'Technical', 'priority': 'High', 'status': 'In Progress', 'owner': 'Amina Bello', 'summary': 'API integration returns authentication errors.'}"
+        },
+        {
+          "role": "tool",
+          "content": "search_company_knowledge returned: {'question': 'What does the company escalation policy say?', 'answer': 'not change the original support priority unless the impact assessment also changes.', 'sources': ['support_escalation_process.txt'], 'chunks': ['support_escalation_process_medium_001'], 'evidence': ['Escalation does not change the original support priority unless the impact assessment also changes.'], 'retrieval_scores': [0.5646662712097168], 'retrieval_details': [{'document_name': 'support_escalation_process.txt', 'chunk_id': 'support_escalation_process_medium_001', 'evidence': 'Escalation does not change the original support priority unless the impact assessment also changes.', 'chunk_similarity': 0.6401036977767944, 'sentence_similarity': 0.5646662712097168, 'adjusted_evidence_score': 0.5646662712097168, 'version': '2.1', 'status': 'Current'}], 'abstained': False, 'retrieval_mode': 'standard', 'conflict': None}"
+        },
+        {
+          "role": "assistant",
+          "content": "Ticket TKT-005 is In Progress. Priority: High. Owner: Amina Bello. Summary: API integration returns authentication errors. Company knowledge: not change the original support priority unless the impact assessment also changes."
+        }
+      ],
+      "tool_calls": [
+        {
+          "call_id": 1,
+          "step": 1,
+          "tool": "get_ticket",
+          "argument": "TKT-005",
+          "used_prior_result": false,
+          "dependency_note": null
+        },
+        {
+          "call_id": 2,
+          "step": 2,
+          "tool": "search_company_knowledge",
+          "argument": "What does the company escalation policy say?",
+          "used_prior_result": false,
+          "dependency_note": null
+        }
+      ],
+      "tool_results": [
+        {
+          "call_id": 1,
+          "tool": "get_ticket",
+          "result": {
+            "ticket_id": "TKT-005",
+            "customer": "Silverline Health",
+            "category": "Technical",
+            "priority": "High",
+            "status": "In Progress",
+            "owner": "Amina Bello",
+            "summary": "API integration returns authentication errors."
+          }
+        },
+        {
+          "call_id": 2,
+          "tool": "search_company_knowledge",
+          "result": {
+            "question": "What does the company escalation policy say?",
+            "answer": "not change the original support priority unless the impact assessment also changes.",
+            "sources": [
+              "support_escalation_process.txt"
+            ],
+            "chunks": [
+              "support_escalation_process_medium_001"
+            ],
+            "evidence": [
+              "Escalation does not change the original support priority unless the impact assessment also changes."
+            ],
+            "retrieval_scores": [
+              0.5646662712097168
+            ],
+            "retrieval_details": [
+              {
+                "document_name": "support_escalation_process.txt",
+                "chunk_id": "support_escalation_process_medium_001",
+                "evidence": "Escalation does not change the original support priority unless the impact assessment also changes.",
+                "chunk_similarity": 0.6401036977767944,
+                "sentence_similarity": 0.5646662712097168,
+                "adjusted_evidence_score": 0.5646662712097168,
+                "version": "2.1",
+                "status": "Current"
+              }
+            ],
+            "abstained": false,
+            "retrieval_mode": "standard",
+            "conflict": null
+          }
+        }
+      ],
+      "step_count": 2,
+      "errors": [],
+      "final_answer": "Ticket TKT-005 is In Progress. Priority: High. Owner: Amina Bello. Summary: API integration returns authentication errors. Company knowledge: not change the original support priority unless the impact assessment also changes.",
+      "status": "COMPLETED",
+      "stop_reason": "READY",
+      "planned_tools": [
+        "get_ticket",
+        "search_company_knowledge"
+      ],
+      "next_tool_index": 2,
+      "max_steps": 5,
+      "planner": {
+        "raw_output": "TICKET|KNOWLEDGE",
+        "model_labels": [
+          "TICKET",
+          "KNOWLEDGE"
+        ],
+        "model_tools": [
+          "get_ticket",
+          "search_company_knowledge"
+        ],
+        "structural_plan": [
+          "get_ticket",
+          "search_company_knowledge"
+        ],
+        "validation_reason": "MODEL_PLAN_ACCEPTED"
+      }
+    }
+  },
+  {
+    "test_id": "LOOP-002",
+    "description": "Dependent tool chain reaches READY",
+    "evaluation": {
+      "state_valid": true,
+      "validation_errors": [],
+      "expected_stop_reason": "READY",
+      "actual_stop_reason": "READY",
+      "stop_reason_correct": true,
+      "stayed_within_limit": true,
+      "passed": true
+    },
+    "state": {
+      "user_request": "Get the amount on EXP-010 and add 7200 to it.",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Get the amount on EXP-010 and add 7200 to it."
+        },
+        {
+          "role": "assistant",
+          "content": "Validated tool plan: get_expense_claim -> calculate_expense"
+        },
+        {
+          "role": "tool",
+          "content": "get_expense_claim returned: {'claim_id': 'EXP-010', 'employee': 'James White', 'category': 'Transport', 'amount': '8400', 'date': '2026-08-10', 'status': 'Approved'}"
+        },
+        {
+          "role": "tool",
+          "content": "calculate_expense returned: 15600.0"
+        },
+        {
+          "role": "assistant",
+          "content": "Expense claim EXP-010 was submitted by James White. Amount: 8400. Status: Approved. Calculated expense total: 15600.0"
+        }
+      ],
+      "tool_calls": [
+        {
+          "call_id": 1,
+          "step": 1,
+          "tool": "get_expense_claim",
+          "argument": "EXP-010",
+          "used_prior_result": false,
+          "dependency_note": null
+        },
+        {
+          "call_id": 2,
+          "step": 2,
+          "tool": "calculate_expense",
+          "argument": [
+            8400.0,
+            7200.0
+          ],
+          "used_prior_result": true,
+          "dependency_note": "Used expense-claim amount 8400.0 from the previous tool result."
+        }
+      ],
+      "tool_results": [
+        {
+          "call_id": 1,
+          "tool": "get_expense_claim",
+          "result": {
+            "claim_id": "EXP-010",
+            "employee": "James White",
+            "category": "Transport",
+            "amount": "8400",
+            "date": "2026-08-10",
+            "status": "Approved"
+          }
+        },
+        {
+          "call_id": 2,
+          "tool": "calculate_expense",
+          "result": 15600.0
+        }
+      ],
+      "step_count": 2,
+      "errors": [],
+      "final_answer": "Expense claim EXP-010 was submitted by James White. Amount: 8400. Status: Approved. Calculated expense total: 15600.0",
+      "status": "COMPLETED",
+      "stop_reason": "READY",
+      "planned_tools": [
+        "get_expense_claim",
+        "calculate_expense"
+      ],
+      "next_tool_index": 2,
+      "max_steps": 5,
+      "planner": {
+        "raw_output": "EXPENSE_CLAIM|CALCULATE",
+        "model_labels": [
+          "EXPENSE_CLAIM",
+          "CALCULATE"
+        ],
+        "model_tools": [
+          "get_expense_claim",
+          "calculate_expense"
+        ],
+        "structural_plan": [
+          "get_expense_claim",
+          "calculate_expense"
+        ],
+        "validation_reason": "MODEL_PLAN_ACCEPTED"
+      }
+    }
+  },
+  {
+    "test_id": "LOOP-003",
+    "description": "Missing ticket identifier requires clarification",
+    "evaluation": {
+      "state_valid": true,
+      "validation_errors": [],
+      "expected_stop_reason": "CLARIFICATION",
+      "actual_stop_reason": "CLARIFICATION",
+      "stop_reason_correct": true,
+      "stayed_within_limit": true,
+      "passed": true
+    },
+    "state": {
+      "user_request": "Check the ticket and tell me who owns it.",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check the ticket and tell me who owns it."
+        },
+        {
+          "role": "assistant",
+          "content": "Validated tool plan: get_ticket"
+        },
+        {
+          "role": "assistant",
+          "content": "Which ticket should I check? Please provide the ticket ID, for example TKT-005."
+        }
+      ],
+      "tool_calls": [],
+      "tool_results": [],
+      "step_count": 0,
+      "errors": [],
+      "final_answer": "Which ticket should I check? Please provide the ticket ID, for example TKT-005.",
+      "status": "WAITING_FOR_CLARIFICATION",
+      "stop_reason": "CLARIFICATION",
+      "planned_tools": [
+        "get_ticket"
+      ],
+      "next_tool_index": 0,
+      "max_steps": 5,
+      "planner": {
+        "raw_output": "TICKET|KNOWLEDGE",
+        "model_labels": [
+          "TICKET",
+          "KNOWLEDGE"
+        ],
+        "model_tools": [
+          "get_ticket",
+          "search_company_knowledge"
+        ],
+        "structural_plan": [
+          "get_ticket"
+        ],
+        "validation_reason": "STRUCTURAL_OVERRIDE"
+      }
+    }
+  },
+  {
+    "test_id": "LOOP-004",
+    "description": "Missing record causes unrecoverable stop",
+    "evaluation": {
+      "state_valid": true,
+      "validation_errors": [],
+      "expected_stop_reason": "UNRECOVERABLE",
+      "actual_stop_reason": "UNRECOVERABLE",
+      "stop_reason_correct": true,
+      "stayed_within_limit": true,
+      "passed": true
+    },
+    "state": {
+      "user_request": "Check ticket TKT-999.",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check ticket TKT-999."
+        },
+        {
+          "role": "assistant",
+          "content": "Validated tool plan: get_ticket"
+        },
+        {
+          "role": "assistant",
+          "content": "I could not continue because get_ticket failed: KeyError: \"Ticket 'TKT-999' was not found.\""
+        }
+      ],
+      "tool_calls": [
+        {
+          "call_id": 1,
+          "step": 1,
+          "tool": "get_ticket",
+          "argument": "TKT-999",
+          "used_prior_result": false,
+          "dependency_note": null
+        }
+      ],
+      "tool_results": [],
+      "step_count": 1,
+      "errors": [
+        {
+          "call_id": 1,
+          "tool": "get_ticket",
+          "error": "KeyError: \"Ticket 'TKT-999' was not found.\""
+        }
+      ],
+      "final_answer": "I could not continue because get_ticket failed: KeyError: \"Ticket 'TKT-999' was not found.\"",
+      "status": "FAILED",
+      "stop_reason": "UNRECOVERABLE",
+      "planned_tools": [
+        "get_ticket"
+      ],
+      "next_tool_index": 0,
+      "max_steps": 5,
+      "planner": {
+        "raw_output": "TICKET|TKT-999",
+        "model_labels": [
+          "TICKET"
+        ],
+        "model_tools": [
+          "get_ticket"
+        ],
+        "structural_plan": [
+          "get_ticket"
+        ],
+        "validation_reason": "MODEL_PLAN_ACCEPTED"
+      }
+    }
+  },
+  {
+    "test_id": "LOOP-005",
+    "description": "Safety limit stops unfinished multi-tool execution",
+    "evaluation": {
+      "state_valid": true,
+      "validation_errors": [],
+      "expected_stop_reason": "MAX_STEPS",
+      "actual_stop_reason": "MAX_STEPS",
+      "stop_reason_correct": true,
+      "stayed_within_limit": true,
+      "passed": true
+    },
+    "state": {
+      "user_request": "Check TKT-005, add 32000 and 8500, and tell me what our escalation policy says.",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Check TKT-005, add 32000 and 8500, and tell me what our escalation policy says."
+        },
+        {
+          "role": "assistant",
+          "content": "Validated tool plan: get_ticket -> calculate_expense -> search_company_knowledge"
+        },
+        {
+          "role": "tool",
+          "content": "get_ticket returned: {'ticket_id': 'TKT-005', 'customer': 'Silverline Health', 'category': 'Technical', 'priority': 'High', 'status': 'In Progress', 'owner': 'Amina Bello', 'summary': 'API integration returns authentication errors.'}"
+        },
+        {
+          "role": "tool",
+          "content": "calculate_expense returned: 40500.0"
+        },
+        {
+          "role": "assistant",
+          "content": "I stopped execution after reaching the maximum of 2 tool steps. The request was not fully completed."
+        }
+      ],
+      "tool_calls": [
+        {
+          "call_id": 1,
+          "step": 1,
+          "tool": "get_ticket",
+          "argument": "TKT-005",
+          "used_prior_result": false,
+          "dependency_note": null
+        },
+        {
+          "call_id": 2,
+          "step": 2,
+          "tool": "calculate_expense",
+          "argument": [
+            32000.0,
+            8500.0
+          ],
+          "used_prior_result": false,
+          "dependency_note": null
+        }
+      ],
+      "tool_results": [
+        {
+          "call_id": 1,
+          "tool": "get_ticket",
+          "result": {
+            "ticket_id": "TKT-005",
+            "customer": "Silverline Health",
+            "category": "Technical",
+            "priority": "High",
+            "status": "In Progress",
+            "owner": "Amina Bello",
+            "summary": "API integration returns authentication errors."
+          }
+        },
+        {
+          "call_id": 2,
+          "tool": "calculate_expense",
+          "result": 40500.0
+        }
+      ],
+      "step_count": 2,
+      "errors": [],
+      "final_answer": "I stopped execution after reaching the maximum of 2 tool steps. The request was not fully completed.",
+      "status": "STOPPED_MAX_STEPS",
+      "stop_reason": "MAX_STEPS",
+      "planned_tools": [
+        "get_ticket",
+        "calculate_expense",
+        "search_company_knowledge"
+      ],
+      "next_tool_index": 2,
+      "max_steps": 2,
+      "planner": {
+        "raw_output": "TICKET|KNOWLEDGE",
+        "model_labels": [
+          "TICKET",
+          "KNOWLEDGE"
+        ],
+        "model_tools": [
+          "get_ticket",
+          "search_company_knowledge"
+        ],
+        "structural_plan": [
+          "get_ticket",
+          "calculate_expense",
+          "search_company_knowledge"
+        ],
+        "validation_reason": "STRUCTURAL_OVERRIDE"
+      }
+    }
+  }
+]
