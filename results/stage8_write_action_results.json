@@ -1,0 +1,372 @@
+{
+  "summary": {
+    "tests": 7,
+    "passed": 7,
+    "pass_rate": 100.0,
+    "created": 2,
+    "clarifications": 3,
+    "rejected_write_attempts": 2,
+    "stored_escalations": 2,
+    "audit_attempts": 4,
+    "audit_success": 2,
+    "audit_failure": 2,
+    "audit_valid": true
+  },
+  "tests": [
+    {
+      "test_id": "WRITE-001",
+      "expected_outcome": "CREATED",
+      "actual_outcome": "CREATED",
+      "passed": true,
+      "state_valid": true,
+      "state": {
+        "user_request": "Escalate TKT-003 because the production dashboard is unavailable.",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Escalate TKT-003 because the production dashboard is unavailable."
+          },
+          {
+            "role": "tool",
+            "content": "create_escalation returned: {'success': True, 'message': 'Escalation ESC-001 created for TKT-003.', 'escalation': {'escalation_id': 'ESC-001', 'ticket_id': 'TKT-003', 'customer': 'GreenField Retail', 'ticket_priority': 'Critical', 'ticket_owner': 'Sarah James', 'reason': 'the production dashboard is unavailable', 'status': 'Open', 'created_at': '2026-09-15T14:35:02.373755+00:00'}}"
+          },
+          {
+            "role": "assistant",
+            "content": "Escalation ESC-001 created for TKT-003."
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": 1,
+            "step": 1,
+            "tool": "create_escalation",
+            "argument": {
+              "ticket_id": "TKT-003",
+              "reason": "the production dashboard is unavailable"
+            },
+            "used_prior_result": false,
+            "dependency_note": null
+          }
+        ],
+        "tool_results": [
+          {
+            "call_id": 1,
+            "tool": "create_escalation",
+            "result": {
+              "success": true,
+              "message": "Escalation ESC-001 created for TKT-003.",
+              "escalation": {
+                "escalation_id": "ESC-001",
+                "ticket_id": "TKT-003",
+                "customer": "GreenField Retail",
+                "ticket_priority": "Critical",
+                "ticket_owner": "Sarah James",
+                "reason": "the production dashboard is unavailable",
+                "status": "Open",
+                "created_at": "2026-09-15T14:35:02.373755+00:00"
+              }
+            }
+          }
+        ],
+        "step_count": 1,
+        "errors": [],
+        "final_answer": "Escalation ESC-001 created for TKT-003.",
+        "status": "COMPLETED",
+        "outcome": "CREATED"
+      }
+    },
+    {
+      "test_id": "WRITE-002",
+      "expected_outcome": "DUPLICATE_REJECTED",
+      "actual_outcome": "DUPLICATE_REJECTED",
+      "passed": true,
+      "state_valid": true,
+      "state": {
+        "user_request": "Escalate TKT-003 because the customer reports wider business impact.",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Escalate TKT-003 because the customer reports wider business impact."
+          },
+          {
+            "role": "assistant",
+            "content": "Escalation was not created. ValueError: An escalation already exists for TKT-003: ESC-001"
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": 1,
+            "step": 1,
+            "tool": "create_escalation",
+            "argument": {
+              "ticket_id": "TKT-003",
+              "reason": "the customer reports wider business impact"
+            },
+            "used_prior_result": false,
+            "dependency_note": null
+          }
+        ],
+        "tool_results": [],
+        "step_count": 1,
+        "errors": [
+          {
+            "call_id": 1,
+            "tool": "create_escalation",
+            "error": "ValueError: An escalation already exists for TKT-003: ESC-001"
+          }
+        ],
+        "final_answer": "Escalation was not created. ValueError: An escalation already exists for TKT-003: ESC-001",
+        "status": "FAILED",
+        "outcome": "DUPLICATE_REJECTED"
+      }
+    },
+    {
+      "test_id": "WRITE-003",
+      "expected_outcome": "CLARIFICATION",
+      "actual_outcome": "CLARIFICATION",
+      "passed": true,
+      "state_valid": true,
+      "state": {
+        "user_request": "Escalate TKT-005.",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Escalate TKT-005."
+          },
+          {
+            "role": "assistant",
+            "content": "What is the reason for escalating TKT-005?"
+          }
+        ],
+        "tool_calls": [],
+        "tool_results": [],
+        "step_count": 0,
+        "errors": [],
+        "final_answer": "What is the reason for escalating TKT-005?",
+        "status": "WAITING_FOR_CLARIFICATION",
+        "outcome": "CLARIFICATION"
+      }
+    },
+    {
+      "test_id": "WRITE-004",
+      "expected_outcome": "CLARIFICATION",
+      "actual_outcome": "CLARIFICATION",
+      "passed": true,
+      "state_valid": true,
+      "state": {
+        "user_request": "Escalate the ticket because the customer cannot work.",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Escalate the ticket because the customer cannot work."
+          },
+          {
+            "role": "assistant",
+            "content": "Which ticket should I escalate? Please provide one ticket ID, for example TKT-003."
+          }
+        ],
+        "tool_calls": [],
+        "tool_results": [],
+        "step_count": 0,
+        "errors": [],
+        "final_answer": "Which ticket should I escalate? Please provide one ticket ID, for example TKT-003.",
+        "status": "WAITING_FOR_CLARIFICATION",
+        "outcome": "CLARIFICATION"
+      }
+    },
+    {
+      "test_id": "WRITE-005",
+      "expected_outcome": "INVALID_RECORD",
+      "actual_outcome": "INVALID_RECORD",
+      "passed": true,
+      "state_valid": true,
+      "state": {
+        "user_request": "Escalate TKT-999 because the production service is unavailable.",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Escalate TKT-999 because the production service is unavailable."
+          },
+          {
+            "role": "assistant",
+            "content": "Escalation was not created. KeyError: \"Ticket 'TKT-999' was not found.\""
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": 1,
+            "step": 1,
+            "tool": "create_escalation",
+            "argument": {
+              "ticket_id": "TKT-999",
+              "reason": "the production service is unavailable"
+            },
+            "used_prior_result": false,
+            "dependency_note": null
+          }
+        ],
+        "tool_results": [],
+        "step_count": 1,
+        "errors": [
+          {
+            "call_id": 1,
+            "tool": "create_escalation",
+            "error": "KeyError: \"Ticket 'TKT-999' was not found.\""
+          }
+        ],
+        "final_answer": "Escalation was not created. KeyError: \"Ticket 'TKT-999' was not found.\"",
+        "status": "FAILED",
+        "outcome": "INVALID_RECORD"
+      }
+    },
+    {
+      "test_id": "WRITE-006",
+      "expected_outcome": "CREATED",
+      "actual_outcome": "CREATED",
+      "passed": true,
+      "state_valid": true,
+      "state": {
+        "user_request": "Escalate TKT-017 because possible unauthorized access requires immediate review.",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Escalate TKT-017 because possible unauthorized access requires immediate review."
+          },
+          {
+            "role": "tool",
+            "content": "create_escalation returned: {'success': True, 'message': 'Escalation ESC-002 created for TKT-017.', 'escalation': {'escalation_id': 'ESC-002', 'ticket_id': 'TKT-017', 'customer': 'Apex Insurance', 'ticket_priority': 'Critical', 'ticket_owner': 'Sarah James', 'reason': 'possible unauthorized access requires immediate review', 'status': 'Open', 'created_at': '2026-09-15T14:35:02.557107+00:00'}}"
+          },
+          {
+            "role": "assistant",
+            "content": "Escalation ESC-002 created for TKT-017."
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": 1,
+            "step": 1,
+            "tool": "create_escalation",
+            "argument": {
+              "ticket_id": "TKT-017",
+              "reason": "possible unauthorized access requires immediate review"
+            },
+            "used_prior_result": false,
+            "dependency_note": null
+          }
+        ],
+        "tool_results": [
+          {
+            "call_id": 1,
+            "tool": "create_escalation",
+            "result": {
+              "success": true,
+              "message": "Escalation ESC-002 created for TKT-017.",
+              "escalation": {
+                "escalation_id": "ESC-002",
+                "ticket_id": "TKT-017",
+                "customer": "Apex Insurance",
+                "ticket_priority": "Critical",
+                "ticket_owner": "Sarah James",
+                "reason": "possible unauthorized access requires immediate review",
+                "status": "Open",
+                "created_at": "2026-09-15T14:35:02.557107+00:00"
+              }
+            }
+          }
+        ],
+        "step_count": 1,
+        "errors": [],
+        "final_answer": "Escalation ESC-002 created for TKT-017.",
+        "status": "COMPLETED",
+        "outcome": "CREATED"
+      }
+    },
+    {
+      "test_id": "WRITE-007",
+      "expected_outcome": "CLARIFICATION",
+      "actual_outcome": "CLARIFICATION",
+      "passed": true,
+      "state_valid": true,
+      "state": {
+        "user_request": "Escalate TKT-010 and TKT-011 because the customer reports a serious issue.",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Escalate TKT-010 and TKT-011 because the customer reports a serious issue."
+          },
+          {
+            "role": "assistant",
+            "content": "I found more than one ticket ID. Please specify exactly one ticket to escalate."
+          }
+        ],
+        "tool_calls": [],
+        "tool_results": [],
+        "step_count": 0,
+        "errors": [],
+        "final_answer": "I found more than one ticket ID. Please specify exactly one ticket to escalate.",
+        "status": "WAITING_FOR_CLARIFICATION",
+        "outcome": "CLARIFICATION"
+      }
+    }
+  ],
+  "escalations": [
+    {
+      "escalation_id": "ESC-001",
+      "ticket_id": "TKT-003",
+      "customer": "GreenField Retail",
+      "ticket_priority": "Critical",
+      "ticket_owner": "Sarah James",
+      "reason": "the production dashboard is unavailable",
+      "status": "Open",
+      "created_at": "2026-09-15T14:35:02.373755+00:00"
+    },
+    {
+      "escalation_id": "ESC-002",
+      "ticket_id": "TKT-017",
+      "customer": "Apex Insurance",
+      "ticket_priority": "Critical",
+      "ticket_owner": "Sarah James",
+      "reason": "possible unauthorized access requires immediate review",
+      "status": "Open",
+      "created_at": "2026-09-15T14:35:02.557107+00:00"
+    }
+  ],
+  "audit_records": [
+    {
+      "timestamp": "2026-09-15T14:35:02.377950+00:00",
+      "action": "create_escalation",
+      "ticket_id": "TKT-003",
+      "reason": "the production dashboard is unavailable",
+      "success": true,
+      "escalation_id": "ESC-001",
+      "error": null
+    },
+    {
+      "timestamp": "2026-09-15T14:35:02.402908+00:00",
+      "action": "create_escalation",
+      "ticket_id": "TKT-003",
+      "reason": "the customer reports wider business impact",
+      "success": false,
+      "escalation_id": "ESC-001",
+      "error": "An escalation already exists for TKT-003: ESC-001"
+    },
+    {
+      "timestamp": "2026-09-15T14:35:02.433669+00:00",
+      "action": "create_escalation",
+      "ticket_id": "TKT-999",
+      "reason": "the production service is unavailable",
+      "success": false,
+      "escalation_id": null,
+      "error": "KeyError: \"Ticket 'TKT-999' was not found.\""
+    },
+    {
+      "timestamp": "2026-09-15T14:35:02.566371+00:00",
+      "action": "create_escalation",
+      "ticket_id": "TKT-017",
+      "reason": "possible unauthorized access requires immediate review",
+      "success": true,
+      "escalation_id": "ESC-002",
+      "error": null
+    }
+  ]
+}

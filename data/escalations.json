@@ -1,0 +1,22 @@
+[
+  {
+    "escalation_id": "ESC-001",
+    "ticket_id": "TKT-003",
+    "customer": "GreenField Retail",
+    "ticket_priority": "Critical",
+    "ticket_owner": "Sarah James",
+    "reason": "the production dashboard is unavailable",
+    "status": "Open",
+    "created_at": "2026-09-15T14:35:02.373755+00:00"
+  },
+  {
+    "escalation_id": "ESC-002",
+    "ticket_id": "TKT-017",
+    "customer": "Apex Insurance",
+    "ticket_priority": "Critical",
+    "ticket_owner": "Sarah James",
+    "reason": "possible unauthorized access requires immediate review",
+    "status": "Open",
+    "created_at": "2026-09-15T14:35:02.557107+00:00"
+  }
+]

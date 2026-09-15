@@ -1,0 +1,4 @@
+{"timestamp": "2026-09-15T14:35:02.377950+00:00", "action": "create_escalation", "ticket_id": "TKT-003", "reason": "the production dashboard is unavailable", "success": true, "escalation_id": "ESC-001", "error": null}
+{"timestamp": "2026-09-15T14:35:02.402908+00:00", "action": "create_escalation", "ticket_id": "TKT-003", "reason": "the customer reports wider business impact", "success": false, "escalation_id": "ESC-001", "error": "An escalation already exists for TKT-003: ESC-001"}
+{"timestamp": "2026-09-15T14:35:02.433669+00:00", "action": "create_escalation", "ticket_id": "TKT-999", "reason": "the production service is unavailable", "success": false, "escalation_id": null, "error": "KeyError: \"Ticket 'TKT-999' was not found.\""}
+{"timestamp": "2026-09-15T14:35:02.566371+00:00", "action": "create_escalation", "ticket_id": "TKT-017", "reason": "possible unauthorized access requires immediate review", "success": true, "escalation_id": "ESC-002", "error": null}
