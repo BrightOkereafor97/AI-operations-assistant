@@ -1,0 +1,2 @@
+gold_cases,mode_accuracy,exact_tool_plan_accuracy,required_tool_coverage,unnecessary_tool_call_rate,first_argument_accuracy,dependency_success_rate,safe_stop_accuracy,write_safety_accuracy,semantic_check_accuracy,overall_gold_pass_rate,passed_cases,failed_cases,semantic_cases
+64,100.0,100.0,100.0,0.0,100.0,100.0,100.0,100.0,100.0,100.0,64,0,63

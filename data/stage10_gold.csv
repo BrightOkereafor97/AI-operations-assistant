@@ -1,0 +1,65 @@
+case_id,category,user_request,expected_mode,expected_tools,expected_first_argument,expected_dependency,expected_stop_reason,expected_outcome,expected_answer_contains,expected_evidence_contains,max_steps
+GOLD-001,ticket_lookup,Check ticket TKT-001.,READ_AGENT,get_ticket,TKT-001,,READY,,TKT-001,,5
+GOLD-002,ticket_lookup,What is the status of TKT-002?,READ_AGENT,get_ticket,TKT-002,,READY,,TKT-002,,5
+GOLD-003,ticket_lookup,Who owns ticket TKT-003?,READ_AGENT,get_ticket,TKT-003,,READY,,TKT-003,,5
+GOLD-004,ticket_lookup,Show me TKT-004.,READ_AGENT,get_ticket,TKT-004,,READY,,TKT-004,,5
+GOLD-005,ticket_lookup,Check support ticket TKT-005.,READ_AGENT,get_ticket,TKT-005,,READY,,Amina Bello,,5
+GOLD-006,ticket_lookup,What priority is TKT-006?,READ_AGENT,get_ticket,TKT-006,,READY,,TKT-006,,5
+GOLD-007,ticket_lookup,Look up TKT-007.,READ_AGENT,get_ticket,TKT-007,,READY,,TKT-007,,5
+GOLD-008,ticket_lookup,Tell me the owner and status of TKT-008.,READ_AGENT,get_ticket,TKT-008,,READY,,TKT-008,,5
+GOLD-009,ticket_lookup,Check TKT-009 for me.,READ_AGENT,get_ticket,TKT-009,,READY,,TKT-009,,5
+GOLD-010,ticket_lookup,What is happening with TKT-010?,READ_AGENT,get_ticket,TKT-010,,READY,,TKT-010,,5
+GOLD-011,expense_claim_lookup,Check expense claim EXP-001.,READ_AGENT,get_expense_claim,EXP-001,,READY,,EXP-001,,5
+GOLD-012,expense_claim_lookup,What is the status of EXP-002?,READ_AGENT,get_expense_claim,EXP-002,,READY,,John Bello,,5
+GOLD-013,expense_claim_lookup,Who submitted EXP-003?,READ_AGENT,get_expense_claim,EXP-003,,READY,,EXP-003,,5
+GOLD-014,expense_claim_lookup,Show expense claim EXP-004.,READ_AGENT,get_expense_claim,EXP-004,,READY,,Approved,,5
+GOLD-015,expense_claim_lookup,Look up EXP-005.,READ_AGENT,get_expense_claim,EXP-005,,READY,,EXP-005,,5
+GOLD-016,expense_claim_lookup,Tell me about claim EXP-006.,READ_AGENT,get_expense_claim,EXP-006,,READY,,EXP-006,,5
+GOLD-017,expense_claim_lookup,Who submitted expense claim EXP-007?,READ_AGENT,get_expense_claim,EXP-007,,READY,,Sarah Ade,,5
+GOLD-018,expense_claim_lookup,Check EXP-008.,READ_AGENT,get_expense_claim,EXP-008,,READY,,EXP-008,,5
+GOLD-019,calculation,Add 1000 and 2500.,READ_AGENT,calculate_expense,1000|2500,,READY,,3500,,5
+GOLD-020,calculation,Calculate 18500 plus 7200 plus 45000.,READ_AGENT,calculate_expense,18500|7200|45000,,READY,,70700,,5
+GOLD-021,calculation,Add 32000 hotel and 8500 transport.,READ_AGENT,calculate_expense,32000|8500,,READY,,40500,,5
+GOLD-022,calculation,Calculate 12000 plus 3500.,READ_AGENT,calculate_expense,12000|3500,,READY,,15500,,5
+GOLD-023,calculation,"What is the total of 900, 1100 and 3000?",READ_AGENT,calculate_expense,900|1100|3000,,READY,,5000,,5
+GOLD-024,calculation,Sum 15000 plus 5000.,READ_AGENT,calculate_expense,15000|5000,,READY,,20000,,5
+GOLD-025,calculation,Add 8400 and 7200.,READ_AGENT,calculate_expense,8400|7200,,READY,,15600,,5
+GOLD-026,calculation,Calculate 50000 plus 12500 plus 7500.,READ_AGENT,calculate_expense,50000|12500|7500,,READY,,70000,,5
+GOLD-027,knowledge,How many annual leave days do full-time employees receive?,READ_AGENT,search_company_knowledge,,,READY,,25,,5
+GOLD-028,knowledge,What does the sick leave policy say about medical evidence?,READ_AGENT,search_company_knowledge,,,READY,,medical,,5
+GOLD-029,knowledge,What does the current remote work policy say?,READ_AGENT,search_company_knowledge,,,READY,,review,,5
+GOLD-030,knowledge,What does the company say about employee expenses?,READ_AGENT,search_company_knowledge,,,READY,,reasonable,,5
+GOLD-031,knowledge,What does our travel-expense policy say?,READ_AGENT,search_company_knowledge,,,READY,,Employee Expense Policy,,5
+GOLD-032,knowledge,What does the company escalation policy say?,READ_AGENT,search_company_knowledge,,,READY,,priority,,5
+GOLD-033,knowledge,What does the support service level policy say?,READ_AGENT,search_company_knowledge,,,READY,,,,5
+GOLD-034,knowledge,What does the refund policy say?,READ_AGENT,search_company_knowledge,,,READY,,Customer Refund Policy,,5
+GOLD-035,knowledge,Tell me the annual leave entitlement for a full-time employee.,READ_AGENT,search_company_knowledge,,,READY,,25,,5
+GOLD-036,knowledge,Can remote-working arrangements be reviewed?,READ_AGENT,search_company_knowledge,,,READY,,review,,5
+GOLD-037,multi_tool_independent,Check TKT-005 and tell me what the company escalation policy says.,READ_AGENT,get_ticket|search_company_knowledge,TKT-005,,READY,,Amina Bello,,5
+GOLD-038,multi_tool_independent,Check EXP-010 and tell me what the company policy says about employee travel expenses.,READ_AGENT,get_expense_claim|search_company_knowledge,EXP-010,,READY,,James White,,5
+GOLD-039,multi_tool_independent,"Add 32000 hotel and 8500 transport, then tell me what our travel-expense policy says.",READ_AGENT,calculate_expense|search_company_knowledge,32000|8500,,READY,,40500,,5
+GOLD-040,multi_tool_independent,Check TKT-010 and EXP-010. Tell me both statuses.,READ_AGENT,get_ticket|get_expense_claim,TKT-010,,READY,,EXP-010,,5
+GOLD-041,multi_tool_independent,Who owns TKT-020 and who submitted EXP-002?,READ_AGENT,get_ticket|get_expense_claim,TKT-020,,READY,,John Bello,,5
+GOLD-042,multi_tool_independent,"Check TKT-005, add 32000 and 8500, and tell me what our escalation policy says.",READ_AGENT,get_ticket|calculate_expense|search_company_knowledge,TKT-005,,READY,,40500,,5
+GOLD-043,multi_tool_independent,"Who submitted EXP-007, and how many annual leave days do full-time employees receive?",READ_AGENT,get_expense_claim|search_company_knowledge,EXP-007,,READY,,25,,5
+GOLD-044,multi_tool_independent,Who owns TKT-017 and what does the company escalation process say?,READ_AGENT,get_ticket|search_company_knowledge,TKT-017,,READY,,Sarah James,,5
+GOLD-045,dependent_chain,Get the amount on EXP-010 and add 7200 to it.,READ_AGENT,get_expense_claim|calculate_expense,EXP-010,TRUE,READY,,15600,,5
+GOLD-046,dependent_chain,Get the amount on EXP-004 and add 500 to it.,READ_AGENT,get_expense_claim|calculate_expense,EXP-004,TRUE,READY,,10000,,5
+GOLD-047,dependent_chain,Get the amount on EXP-002 and add 2800 to it.,READ_AGENT,get_expense_claim|calculate_expense,EXP-002,TRUE,READY,,10000,,5
+GOLD-048,dependent_chain,Check TKT-003 and tell me what response target applies to its priority.,READ_AGENT,get_ticket|search_company_knowledge,TKT-003,TRUE,READY,,,Critical,5
+GOLD-049,dependent_chain,Check TKT-005 and tell me what response target applies to its priority.,READ_AGENT,get_ticket|search_company_knowledge,TKT-005,TRUE,READY,,,High,5
+GOLD-050,dependent_chain,Check TKT-010 and tell me what response target applies to its priority.,READ_AGENT,get_ticket|search_company_knowledge,TKT-010,TRUE,READY,,,High,5
+GOLD-051,clarification,Check the ticket and tell me who owns it.,READ_AGENT,,,,CLARIFICATION,,ticket ID,,5
+GOLD-052,clarification,Check the expense claim and tell me its status.,READ_AGENT,,,,CLARIFICATION,,claim ID,,5
+GOLD-053,missing_record,Check ticket TKT-999.,READ_AGENT,get_ticket,TKT-999,,UNRECOVERABLE,,not found,,5
+GOLD-054,missing_record,Check expense claim EXP-999.,READ_AGENT,get_expense_claim,EXP-999,,UNRECOVERABLE,,not found,,5
+GOLD-055,clarification,Calculate the expense total.,READ_AGENT,,,,CLARIFICATION,,amounts,,5
+GOLD-056,write_action,Escalate TKT-003 because the production dashboard is unavailable.,WRITE,create_escalation,TKT-003,,,CREATED,created,,5
+GOLD-057,write_action,Escalate TKT-003 because the customer reports wider business impact.,WRITE,create_escalation,TKT-003,,,DUPLICATE_REJECTED,already exists,,5
+GOLD-058,write_clarification,Escalate TKT-005.,WRITE,,,,,CLARIFICATION,reason,,5
+GOLD-059,write_clarification,Escalate the ticket because the customer cannot work.,WRITE,,,,,CLARIFICATION,ticket,,5
+GOLD-060,write_clarification,Escalate TKT-010 and TKT-011 because the customer reports a serious issue.,WRITE,,,,,CLARIFICATION,one ticket,,5
+GOLD-061,write_invalid_record,Escalate TKT-999 because the production service is unavailable.,WRITE,create_escalation,TKT-999,,,INVALID_RECORD,not found,,5
+GOLD-062,unsupported_write,Approve EXP-010.,UNSUPPORTED_WRITE,,,,,BLOCKED_UNSUPPORTED_WRITE,not available,,5
+GOLD-063,unsupported_write,Delete ticket TKT-005.,UNSUPPORTED_WRITE,,,,,BLOCKED_UNSUPPORTED_WRITE,not available,,5
+GOLD-064,loop_safety,"Check TKT-005, add 32000 and 8500, and tell me what our escalation policy says.",READ_AGENT,get_ticket|calculate_expense,TKT-005,,MAX_STEPS,,maximum,,2
