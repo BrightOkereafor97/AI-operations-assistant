@@ -1,4 +1,4 @@
-import csv
+﻿import csv
 import sys
 
 from decimal import Decimal, InvalidOperation
@@ -34,7 +34,7 @@ PROJECT2_SRC = (
 
 
 # ================================================================
-# TOOL 1 — GET SUPPORT TICKET
+# TOOL 1 â€” GET SUPPORT TICKET
 # ================================================================
 
 def get_ticket(
@@ -105,7 +105,7 @@ def get_ticket(
 
 
 # ================================================================
-# TOOL 2 — GET EXPENSE CLAIM
+# TOOL 2 â€” GET EXPENSE CLAIM
 # ================================================================
 
 def get_expense_claim(
@@ -176,7 +176,7 @@ def get_expense_claim(
 
 
 # ================================================================
-# TOOL 3 — CALCULATE EXPENSE
+# TOOL 3 â€” CALCULATE EXPENSE
 # ================================================================
 
 def calculate_expense(
@@ -396,7 +396,7 @@ def _load_project2_rag():
 
 
 # ================================================================
-# STAGE 4 — RAG RESULT HELPERS
+# STAGE 4 â€” RAG RESULT HELPERS
 # ================================================================
 
 ABSTENTION_PHRASES = (
@@ -856,7 +856,7 @@ def _build_generation_evidence(
 
 
 # ================================================================
-# TOOL 4 — SEARCH COMPANY KNOWLEDGE
+# TOOL 4 â€” SEARCH COMPANY KNOWLEDGE
 # ================================================================
 
 def search_company_knowledge(
