@@ -1,31 +1,74 @@
-﻿import csv
-import sys
+﻿import sys
 
-from decimal import Decimal, InvalidOperation
+from decimal import (
+    Decimal,
+    InvalidOperation,
+)
+
 from pathlib import Path
+
+from sqlalchemy import (
+    select,
+)
+
+from backend.database import (
+    SessionLocal,
+)
+
+from backend.models import (
+    ExpenseClaim,
+    Ticket,
+)
 
 
 # ================================================================
 # PATHS
 # ================================================================
 
-PROJECT_ROOT = Path(__file__).resolve().parent
-
-DATA_DIR = PROJECT_ROOT / "data"
-
-TICKETS_FILE = DATA_DIR / "tickets.csv"
-
-EXPENSES_FILE = DATA_DIR / "expenses.csv"
+PROJECT_ROOT = (
+    Path(__file__)
+    .resolve()
+    .parent
+)
 
 
 # ================================================================
-# PROJECT 2 LOCATION
+# RAG LOCATION
+#
+# Prefer the packaged RAG runtime inside Project 3.
+#
+# This is important later for Docker/AWS because the application
+# should not depend on a separate sibling project being present.
+#
+# A legacy fallback is retained for local compatibility.
 # ================================================================
 
-PROJECT2_ROOT = (
+PACKAGED_RAG_ROOT = (
+    PROJECT_ROOT
+    / "rag"
+)
+
+LEGACY_PROJECT2_ROOT = (
     PROJECT_ROOT.parent
     / "AI Project 2"
 )
+
+
+if (
+    PACKAGED_RAG_ROOT
+    / "src"
+).exists():
+
+    PROJECT2_ROOT = (
+        PACKAGED_RAG_ROOT
+    )
+
+else:
+
+    PROJECT2_ROOT = (
+        LEGACY_PROJECT2_ROOT
+    )
+
 
 PROJECT2_SRC = (
     PROJECT2_ROOT
@@ -34,11 +77,20 @@ PROJECT2_SRC = (
 
 
 # ================================================================
-# TOOL 1 â€” GET SUPPORT TICKET
+# TOOL 1 — GET SUPPORT TICKET
+#
+# Database-backed implementation.
+#
+# The external tool contract stays the same:
+#
+#     get_ticket(ticket_id)
+#
+# The agent therefore does not need to know that storage changed
+# from CSV to SQLAlchemy.
 # ================================================================
 
 def get_ticket(
-    ticket_id
+    ticket_id,
 ):
 
     """
@@ -67,49 +119,125 @@ def get_ticket(
         )
 
 
-    if not TICKETS_FILE.exists():
-
-        raise FileNotFoundError(
-            f"Ticket dataset not found: "
-            f"{TICKETS_FILE}"
-        )
+    db = SessionLocal()
 
 
-    with TICKETS_FILE.open(
-        "r",
-        encoding="utf-8"
-    ) as file:
+    try:
 
-        reader = csv.DictReader(
-            file
-        )
-
-
-        for ticket in reader:
-
-            if (
-                ticket["ticket_id"]
-                .strip()
-                .upper()
+        statement = (
+            select(
+                Ticket
+            )
+            .where(
+                Ticket.ticket_id
                 ==
                 ticket_id
-            ):
+            )
+        )
 
-                return ticket
+
+        ticket = (
+            db.scalars(
+                statement
+            )
+            .first()
+        )
 
 
-    raise KeyError(
-        f"Ticket '{ticket_id}' "
-        f"was not found."
+        if ticket is None:
+
+            raise KeyError(
+                f"Ticket '{ticket_id}' "
+                f"was not found."
+            )
+
+
+        # --------------------------------------------------------
+        # Preserve the same dictionary-style result that the
+        # original CSV-backed tool returned.
+        # --------------------------------------------------------
+
+        return {
+
+            "ticket_id":
+                ticket.ticket_id,
+
+            "customer":
+                ticket.customer,
+
+            "category":
+                ticket.category,
+
+            "priority":
+                ticket.priority,
+
+            "status":
+                ticket.status,
+
+            "owner":
+                ticket.owner,
+
+            "summary":
+                ticket.summary,
+        }
+
+
+    finally:
+
+        db.close()
+
+
+# ================================================================
+# LEGACY DECIMAL FORMAT HELPER
+#
+# SQLAlchemy returns expense amounts as Decimal objects.
+#
+# The old CSV tool returned strings such as:
+#
+#     "8400"
+#
+# rather than:
+#
+#     Decimal("8400.00")
+#
+# We preserve that outward contract so downstream agent logic
+# does not unexpectedly change.
+# ================================================================
+
+def _decimal_to_legacy_text(
+    value,
+):
+
+    text = format(
+        value,
+        "f",
     )
 
 
+    if "." in text:
+
+        text = (
+            text
+            .rstrip("0")
+            .rstrip(".")
+        )
+
+
+    return text
+
+
 # ================================================================
-# TOOL 2 â€” GET EXPENSE CLAIM
+# TOOL 2 — GET EXPENSE CLAIM
+#
+# Database-backed implementation.
+#
+# External contract remains:
+#
+#     get_expense_claim(claim_id)
 # ================================================================
 
 def get_expense_claim(
-    claim_id
+    claim_id,
 ):
 
     """
@@ -138,49 +266,83 @@ def get_expense_claim(
         )
 
 
-    if not EXPENSES_FILE.exists():
-
-        raise FileNotFoundError(
-            f"Expense dataset not found: "
-            f"{EXPENSES_FILE}"
-        )
+    db = SessionLocal()
 
 
-    with EXPENSES_FILE.open(
-        "r",
-        encoding="utf-8"
-    ) as file:
+    try:
 
-        reader = csv.DictReader(
-            file
-        )
-
-
-        for claim in reader:
-
-            if (
-                claim["claim_id"]
-                .strip()
-                .upper()
+        statement = (
+            select(
+                ExpenseClaim
+            )
+            .where(
+                ExpenseClaim.claim_id
                 ==
                 claim_id
-            ):
+            )
+        )
 
-                return claim
+
+        claim = (
+            db.scalars(
+                statement
+            )
+            .first()
+        )
 
 
-    raise KeyError(
-        f"Expense claim '{claim_id}' "
-        f"was not found."
-    )
+        if claim is None:
+
+            raise KeyError(
+                f"Expense claim '{claim_id}' "
+                f"was not found."
+            )
+
+
+        # --------------------------------------------------------
+        # Preserve the same dictionary-style output produced by
+        # the original CSV implementation.
+        # --------------------------------------------------------
+
+        return {
+
+            "claim_id":
+                claim.claim_id,
+
+            "employee":
+                claim.employee,
+
+            "category":
+                claim.category,
+
+            "amount":
+                _decimal_to_legacy_text(
+                    claim.amount
+                ),
+
+            "date":
+                claim.date.isoformat(),
+
+            "status":
+                claim.status,
+        }
+
+
+    finally:
+
+        db.close()
 
 
 # ================================================================
-# TOOL 3 â€” CALCULATE EXPENSE
+# TOOL 3 — CALCULATE EXPENSE
+#
+# UNCHANGED.
+#
+# Arithmetic remains deterministic Python logic.
 # ================================================================
 
 def calculate_expense(
-    items
+    items,
 ):
 
     """
@@ -281,7 +443,7 @@ def calculate_expense(
 
 
 # ================================================================
-# PROJECT 2 RAG CACHE
+# PROJECT 2 / PACKAGED RAG CACHE
 # ================================================================
 
 _rag_loaded = False
@@ -300,7 +462,7 @@ _ask_rag = None
 
 
 # ================================================================
-# LOAD PROJECT 2 RAG
+# LOAD RAG SYSTEM
 # ================================================================
 
 def _load_project2_rag():
@@ -328,14 +490,13 @@ def _load_project2_rag():
     if not PROJECT2_SRC.exists():
 
         raise FileNotFoundError(
-            "Project 2 src folder was "
+            "RAG src folder was "
             f"not found at: {PROJECT2_SRC}"
         )
 
 
     # ------------------------------------------------------------
-    # Put Project 2 src at the front
-    # of Python's import search path.
+    # Put RAG src at the front of Python's import search path.
     # ------------------------------------------------------------
 
     if str(
@@ -350,18 +511,18 @@ def _load_project2_rag():
 
     from retrieve import (
         load_embedding_model,
-        load_vector_store
+        load_vector_store,
     )
 
 
     from generate import (
         load_generation_model,
-        ask_rag
+        ask_rag,
     )
 
 
     print(
-        "\nLoading Project 2 RAG system..."
+        "\nLoading RAG system..."
     )
 
 
@@ -384,19 +545,21 @@ def _load_project2_rag():
     ) = load_generation_model()
 
 
-    _ask_rag = ask_rag
+    _ask_rag = (
+        ask_rag
+    )
 
 
     _rag_loaded = True
 
 
     print(
-        "Project 2 RAG system ready."
+        "RAG system ready."
     )
 
 
 # ================================================================
-# STAGE 4 â€” RAG RESULT HELPERS
+# STAGE 4 — RAG RESULT HELPERS
 # ================================================================
 
 ABSTENTION_PHRASES = (
@@ -416,7 +579,7 @@ ABSTENTION_PHRASES = (
 def _first_available(
     data,
     possible_keys,
-    default=None
+    default=None,
 ):
 
     """
@@ -425,7 +588,7 @@ def _first_available(
 
     This allows the Stage 4 wrapper to work
     with the field names already returned by
-    Project 2 without modifying Project 2 yet.
+    the RAG runtime.
     """
 
     if not isinstance(
@@ -453,7 +616,7 @@ def _first_available(
 
 
 def _detect_abstention(
-    answer
+    answer,
 ):
 
     """
@@ -490,7 +653,7 @@ def _detect_abstention(
 
 
 def _normalise_score(
-    value
+    value,
 ):
 
     """
@@ -517,20 +680,20 @@ def _normalise_score(
 
 
 def _build_generation_evidence(
-    result
+    result,
 ):
 
     """
-    Convert Project 2 generation_sources into
+    Convert generation_sources into
     a clean Stage 4 evidence structure.
 
-    We preserve whatever information Project 2
-    already exposes rather than inventing values.
+    We preserve whatever information the
+    underlying RAG system already exposes.
     """
 
     generation_sources = result.get(
         "generation_sources",
-        []
+        [],
     )
 
 
@@ -574,8 +737,8 @@ def _build_generation_evidence(
                 "source",
                 "filename",
                 "file_name",
-                "document"
-            )
+                "document",
+            ),
         )
 
 
@@ -600,8 +763,8 @@ def _build_generation_evidence(
                 "chunk_id",
                 "chunk_name",
                 "chunk",
-                "id"
-            )
+                "id",
+            ),
         )
 
 
@@ -628,8 +791,8 @@ def _build_generation_evidence(
                 "sentence",
                 "text",
                 "chunk_text",
-                "content"
-            )
+                "content",
+            ),
         )
 
 
@@ -655,8 +818,8 @@ def _build_generation_evidence(
                     "chunk_similarity",
                     "similarity",
                     "similarity_score",
-                    "score"
-                )
+                    "score",
+                ),
             )
         )
 
@@ -666,8 +829,8 @@ def _build_generation_evidence(
                 source,
                 (
                     "sentence_similarity",
-                    "sentence_score"
-                )
+                    "sentence_score",
+                ),
             )
         )
 
@@ -678,8 +841,8 @@ def _build_generation_evidence(
                 (
                     "adjusted_evidence_score",
                     "evidence_score",
-                    "adjusted_score"
-                )
+                    "adjusted_score",
+                ),
             )
         )
 
@@ -687,8 +850,8 @@ def _build_generation_evidence(
         # --------------------------------------------------------
         # Choose a primary retrieval/evidence score.
         #
-        # Prefer the adjusted evidence score if Project 2 exposes
-        # it. Otherwise use sentence similarity, then chunk score.
+        # Prefer the adjusted evidence score if exposed.
+        # Otherwise use sentence similarity, then chunk score.
         # --------------------------------------------------------
 
         primary_score = (
@@ -723,6 +886,7 @@ def _build_generation_evidence(
 
         retrieval_details.append(
             {
+
                 "document_name":
                     document_name,
 
@@ -746,8 +910,8 @@ def _build_generation_evidence(
                         source,
                         (
                             "version",
-                            "document_version"
-                        )
+                            "document_version",
+                        ),
                     ),
 
                 "status":
@@ -755,8 +919,8 @@ def _build_generation_evidence(
                         source,
                         (
                             "status",
-                            "document_status"
-                        )
+                            "document_status",
+                        ),
                     ),
             }
         )
@@ -765,8 +929,8 @@ def _build_generation_evidence(
     # ------------------------------------------------------------
     # FALLBACK:
     #
-    # Some Project 2 fields may exist at the top level instead
-    # of inside generation_sources.
+    # Some RAG fields may exist at the top level instead of inside
+    # generation_sources.
     # ------------------------------------------------------------
 
     top_level_chunk = _first_available(
@@ -774,8 +938,8 @@ def _build_generation_evidence(
         (
             "generation_chunk",
             "chunk_id",
-            "chunk"
-        )
+            "chunk",
+        ),
     )
 
 
@@ -794,8 +958,8 @@ def _build_generation_evidence(
         result,
         (
             "focused_evidence",
-            "evidence"
-        )
+            "evidence",
+        ),
     )
 
 
@@ -816,8 +980,8 @@ def _build_generation_evidence(
             "adjusted_evidence_score",
             "sentence_similarity",
             "chunk_similarity",
-            "similarity_score"
-        )
+            "similarity_score",
+        ),
     )
 
 
@@ -838,6 +1002,7 @@ def _build_generation_evidence(
 
 
     return {
+
         "sources":
             sources,
 
@@ -856,18 +1021,18 @@ def _build_generation_evidence(
 
 
 # ================================================================
-# TOOL 4 â€” SEARCH COMPANY KNOWLEDGE
+# TOOL 4 — SEARCH COMPANY KNOWLEDGE
 # ================================================================
 
 def search_company_knowledge(
-    question
+    question,
 ):
 
     """
     Stage 4 wrapper around the existing
-    Project 2 RAG assistant.
+    RAG assistant.
 
-    The underlying Project 2 RAG system still
+    The underlying RAG system still
     performs retrieval and generation.
 
     This wrapper exposes evidence to the agent:
@@ -910,7 +1075,7 @@ def search_company_knowledge(
         _embeddings,
         _metadata,
         _tokenizer,
-        _generation_model
+        _generation_model,
     )
 
 
@@ -920,14 +1085,14 @@ def search_company_knowledge(
     ):
 
         raise TypeError(
-            "Project 2 RAG returned an "
+            "RAG system returned an "
             "unexpected result type."
         )
 
 
     answer = result.get(
         "answer",
-        ""
+        "",
     )
 
 
@@ -946,16 +1111,16 @@ def search_company_knowledge(
 
 
     # ------------------------------------------------------------
-    # If Project 2 already exposes an explicit
-    # abstention field, prefer it.
+    # If RAG already exposes an explicit abstention field,
+    # prefer it.
     # ------------------------------------------------------------
 
     existing_abstention = _first_available(
         result,
         (
             "abstained",
-            "abstain"
-        )
+            "abstain",
+        ),
     )
 
 
@@ -1008,7 +1173,7 @@ def search_company_knowledge(
         "retrieval_mode":
             result.get(
                 "retrieval_mode",
-                ""
+                "",
             ),
 
         "conflict":
