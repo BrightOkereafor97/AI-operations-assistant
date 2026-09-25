@@ -12,8 +12,17 @@ from backend.config import (
 
 
 # ================================================================
-# HEALTH RESPONSE
+# HEALTH
 # ================================================================
+
+class ComponentHealth(
+    BaseModel
+):
+
+    status: str
+
+    detail: str | None = None
+
 
 class HealthResponse(
     BaseModel
@@ -26,6 +35,11 @@ class HealthResponse(
     version: str
 
     timestamp: str
+
+    components: dict[
+        str,
+        ComponentHealth,
+    ]
 
 
 # ================================================================
