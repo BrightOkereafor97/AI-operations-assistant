@@ -1,0 +1,66 @@
+name: Backend Docker Build
+
+on:
+  push:
+    branches:
+      - production-web
+
+  pull_request:
+    branches:
+      - production-web
+
+  workflow_dispatch:
+
+
+jobs:
+
+  build-backend:
+
+    name: Build FastAPI Backend Image
+
+    runs-on: ubuntu-latest
+
+
+    steps:
+
+      # ----------------------------------------------------------
+      # 1. DOWNLOAD REPOSITORY
+      # ----------------------------------------------------------
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      # ----------------------------------------------------------
+      # 2. PREPARE DOCKER BUILDX
+      #
+      # Buildx provides the Linux Docker build environment on the
+      # GitHub-hosted runner.
+      # ----------------------------------------------------------
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+
+      # ----------------------------------------------------------
+      # 3. BUILD BACKEND IMAGE
+      #
+      # We are deliberately NOT pushing to AWS yet.
+      #
+      # First acceptance gate:
+      # Can our project successfully become a Linux container?
+      # ----------------------------------------------------------
+
+      - name: Build backend Docker image
+        uses: docker/build-push-action@v6
+
+        with:
+          context: .
+          file: ./Dockerfile
+
+          push: false
+
+          tags: ai-operations-assistant:ci
+
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
