@@ -12,20 +12,35 @@ on:
   workflow_dispatch:
 
 
+# ================================================================
+# REQUIRED FOR GITHUB → AWS OIDC
+# ================================================================
+
+permissions:
+  contents: read
+  id-token: write
+
+
+# ================================================================
+# SHARED SETTINGS
+# ================================================================
+
+env:
+  AWS_REGION: eu-west-1
+  ECR_REPOSITORY: ai-operations-assistant
+
+
 jobs:
 
-  build-and-test-backend:
+  build-test-and-push:
 
-    name: Build and Smoke Test FastAPI Container
+    name: Build, Test and Push FastAPI Container
 
     runs-on: ubuntu-latest
 
 
     # ============================================================
-    # TEMPORARY POSTGRESQL
-    #
-    # GitHub creates this only for this workflow run.
-    # It disappears when the job finishes.
+    # TEMPORARY POSTGRESQL FOR THE CI TEST
     # ============================================================
 
     services:
@@ -35,18 +50,12 @@ jobs:
         image: postgres:16
 
         env:
-
           POSTGRES_USER: ai_ops_user
-
           POSTGRES_PASSWORD: ci_password
-
           POSTGRES_DB: ai_operations_assistant
 
-
         ports:
-
           - 5432:5432
-
 
         options: >-
           --health-cmd pg_isready
@@ -58,7 +67,7 @@ jobs:
     steps:
 
       # ==========================================================
-      # 1. DOWNLOAD REPOSITORY
+      # 1. DOWNLOAD THE REPOSITORY
       # ==========================================================
 
       - name: Checkout repository
@@ -66,7 +75,7 @@ jobs:
 
 
       # ==========================================================
-      # 2. SET UP DOCKER
+      # 2. PREPARE DOCKER BUILDX
       # ==========================================================
 
       - name: Set up Docker Buildx
@@ -74,39 +83,26 @@ jobs:
 
 
       # ==========================================================
-      # 3. BUILD IMAGE
-      #
-      # load: true means the finished image is made available
-      # to Docker on the GitHub runner so we can actually run it.
+      # 3. BUILD THE BACKEND IMAGE
       # ==========================================================
 
       - name: Build backend Docker image
         uses: docker/build-push-action@v6
 
         with:
-
           context: .
-
           file: ./Dockerfile
-
           push: false
-
           load: true
 
           tags: ai-operations-assistant:ci
 
           cache-from: type=gha
-
           cache-to: type=gha,mode=max
 
 
       # ==========================================================
-      # 4. START FASTAPI CONTAINER
-      #
-      # The DATABASE_URL points to the temporary PostgreSQL
-      # service created above.
-      #
-      # --network host works because this GitHub runner is Linux.
+      # 4. START THE FASTAPI CONTAINER
       # ==========================================================
 
       - name: Start FastAPI container
@@ -121,7 +117,7 @@ jobs:
 
 
       # ==========================================================
-      # 5. WAIT FOR FASTAPI
+      # 5. WAIT UNTIL FASTAPI RESPONDS
       # ==========================================================
 
       - name: Wait for FastAPI
@@ -175,7 +171,7 @@ jobs:
 
 
       # ==========================================================
-      # 6. VALIDATE HEALTH RESPONSE
+      # 6. VALIDATE THE BACKEND HEALTH RESPONSE
       # ==========================================================
 
       - name: Validate backend health
@@ -198,9 +194,7 @@ jobs:
               encoding="utf-8",
           ) as file:
 
-              health = json.load(
-                  file
-              )
+              health = json.load(file)
 
 
           assert (
@@ -210,52 +204,32 @@ jobs:
           ), health
 
 
-          components = (
-              health[
-                  "components"
-              ]
-          )
+          components = health["components"]
 
 
           assert (
-              components[
-                  "fastapi"
-              ][
-                  "status"
-              ]
+              components["fastapi"]["status"]
               ==
               "ready"
           ), health
 
 
           assert (
-              components[
-                  "postgresql"
-              ][
-                  "status"
-              ]
+              components["postgresql"]["status"]
               ==
               "connected"
           ), health
 
 
           assert (
-              components[
-                  "rag_knowledge"
-              ][
-                  "status"
-              ]
+              components["rag_knowledge"]["status"]
               ==
               "available"
           ), health
 
 
           assert (
-              components[
-                  "agent_tools"
-              ][
-                  "status"
-              ]
+              components["agent_tools"]["status"]
               ==
               "available"
           ), health
@@ -269,9 +243,7 @@ jobs:
 
 
       # ==========================================================
-      # 7. SHOW LOGS
-      #
-      # Useful evidence that the container really started.
+      # 7. SHOW FASTAPI LOGS
       # ==========================================================
 
       - name: Show FastAPI container logs
@@ -284,7 +256,7 @@ jobs:
 
 
       # ==========================================================
-      # 8. CLEAN UP
+      # 8. STOP THE TEST CONTAINER
       # ==========================================================
 
       - name: Stop test container
@@ -293,7 +265,83 @@ jobs:
 
         run: |
 
-          docker rm \
-            -f \
-            ai-ops-backend \
-            || true
+          docker rm -f ai-ops-backend || true
+
+
+      # ==========================================================
+      # 9. GET TEMPORARY AWS CREDENTIALS THROUGH OIDC
+      #
+      # This runs only for pushes to production-web.
+      # ==========================================================
+
+      - name: Configure AWS credentials
+
+        if: >
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/production-web'
+
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+
+      # ==========================================================
+      # 10. LOGIN TO AMAZON ECR
+      # ==========================================================
+
+      - name: Login to Amazon ECR
+
+        if: >
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/production-web'
+
+        id: ecr
+
+        uses: aws-actions/amazon-ecr-login@v2
+
+
+      # ==========================================================
+      # 11. TAG AND PUSH THE IMAGE TO ECR
+      # ==========================================================
+
+      - name: Push backend image to Amazon ECR
+
+        if: >
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/production-web'
+
+        env:
+          ECR_REGISTRY: ${{ steps.ecr.outputs.registry }}
+
+        run: |
+
+          echo "Tagging Docker image..."
+
+
+          docker tag \
+            ai-operations-assistant:ci \
+            $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+
+          docker tag \
+            ai-operations-assistant:ci \
+            $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+
+
+          echo "Pushing latest image..."
+
+
+          docker push \
+            $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+
+          echo "Pushing commit-specific image..."
+
+
+          docker push \
+            $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
+
+
+          echo "ECR push completed successfully."
