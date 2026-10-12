@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 
 from sqlalchemy import (
+    URL,
     create_engine,
 )
 
@@ -43,7 +44,19 @@ DATA_DIR.mkdir(
 
 
 # ================================================================
-# 2. ENVIRONMENT VARIABLES
+# 2. LOAD LOCAL ENVIRONMENT VARIABLES
+#
+# Local development can continue using:
+#
+# DATABASE_URL=postgresql+psycopg://...
+#
+# ECS can instead provide:
+#
+# DB_HOST
+# DB_PORT
+# DB_NAME
+# DB_USER
+# DB_PASSWORD
 # ================================================================
 
 load_dotenv(
@@ -53,16 +66,7 @@ load_dotenv(
 
 
 # ================================================================
-# 3. DEFAULT LOCAL DATABASE
-#
-# We deliberately begin with SQLite so we can prove the database
-# architecture without requiring PostgreSQL to be installed yet.
-#
-# Later:
-#
-# DATABASE_URL=postgresql+psycopg://...
-#
-# will switch the same SQLAlchemy code to PostgreSQL.
+# 3. DEFAULT LOCAL SQLITE DATABASE
 # ================================================================
 
 DEFAULT_DB_FILE = (
@@ -78,16 +82,130 @@ DEFAULT_DATABASE_URL = (
 )
 
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    DEFAULT_DATABASE_URL,
-)
+# ================================================================
+# 4. BUILD DATABASE CONNECTION
+#
+# Priority:
+#
+# 1. DATABASE_URL
+# 2. AWS/ECS DB_* variables
+# 3. SQLite local fallback
+#
+# SQLAlchemy URL.create() safely handles special characters
+# inside the database password.
+# ================================================================
+
+def build_database_url():
+
+    explicit_database_url = os.getenv(
+        "DATABASE_URL"
+    )
+
+    if explicit_database_url:
+
+        return explicit_database_url
+
+
+    db_host = os.getenv(
+        "DB_HOST"
+    )
+
+    db_port = os.getenv(
+        "DB_PORT",
+        "5432",
+    )
+
+    db_name = os.getenv(
+        "DB_NAME"
+    )
+
+    db_user = os.getenv(
+        "DB_USER"
+    )
+
+    db_password = os.getenv(
+        "DB_PASSWORD"
+    )
+
+
+    aws_values = {
+        "DB_HOST": db_host,
+        "DB_NAME": db_name,
+        "DB_USER": db_user,
+        "DB_PASSWORD": db_password,
+    }
+
+
+    supplied_aws_values = [
+        name
+        for name, value
+        in aws_values.items()
+        if value
+    ]
+
+
+    # ------------------------------------------------------------
+    # If AWS-style variables have started being supplied,
+    # require all required values.
+    #
+    # This prevents a production container from silently falling
+    # back to SQLite because one ECS variable was forgotten.
+    # ------------------------------------------------------------
+
+    if supplied_aws_values:
+
+        missing_values = [
+            name
+            for name, value
+            in aws_values.items()
+            if not value
+        ]
+
+        if missing_values:
+
+            missing_text = ", ".join(
+                missing_values
+            )
+
+            raise RuntimeError(
+                "Incomplete database configuration. "
+                f"Missing: {missing_text}"
+            )
+
+
+        try:
+
+            port_number = int(
+                db_port
+            )
+
+        except ValueError as exc:
+
+            raise RuntimeError(
+                "DB_PORT must be a valid integer."
+            ) from exc
+
+
+        return URL.create(
+            drivername=(
+                "postgresql+psycopg"
+            ),
+            username=db_user,
+            password=db_password,
+            host=db_host,
+            port=port_number,
+            database=db_name,
+        )
+
+
+    return DEFAULT_DATABASE_URL
+
+
+DATABASE_URL = build_database_url()
 
 
 # ================================================================
-# 4. SQLALCHEMY BASE
-#
-# All database models inherit from this class.
+# 5. SQLALCHEMY BASE
 # ================================================================
 
 class Base(
@@ -97,7 +215,7 @@ class Base(
 
 
 # ================================================================
-# 5. ENGINE SETTINGS
+# 6. ENGINE SETTINGS
 # ================================================================
 
 engine_kwargs = {
@@ -106,8 +224,10 @@ engine_kwargs = {
 }
 
 
-# SQLite needs this option for local FastAPI development.
-if DATABASE_URL.startswith(
+# SQLite requires this setting for local FastAPI development.
+if str(
+    DATABASE_URL
+).startswith(
     "sqlite"
 ):
 
@@ -126,9 +246,7 @@ engine = create_engine(
 
 
 # ================================================================
-# 6. DATABASE SESSION
-#
-# A session is the unit through which Python reads/writes records.
+# 7. DATABASE SESSION
 # ================================================================
 
 SessionLocal = sessionmaker(
@@ -139,13 +257,7 @@ SessionLocal = sessionmaker(
 
 
 # ================================================================
-# 7. FASTAPI DATABASE DEPENDENCY
-#
-# Later our API routes can use:
-#
-#     db = Depends(get_db)
-#
-# The session always closes safely after the request.
+# 8. FASTAPI DATABASE DEPENDENCY
 # ================================================================
 
 def get_db():
