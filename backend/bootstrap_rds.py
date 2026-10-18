@@ -68,11 +68,6 @@ def get_required_environment():
 
 # ================================================================
 # 2. BUILD ADMIN DATABASE URL
-#
-# The database tables and seed data are created using the RDS
-# administrative account.
-#
-# URL.create safely handles special characters inside passwords.
 # ================================================================
 
 def configure_admin_database_url(
@@ -127,14 +122,6 @@ def configure_admin_database_url(
     )
 
 
-    # ------------------------------------------------------------
-    # backend.database checks DATABASE_URL first.
-    #
-    # We intentionally set this before importing seed_database so
-    # the existing SQLAlchemy database layer connects as the RDS
-    # administrator during this one-time bootstrap operation.
-    # ------------------------------------------------------------
-
     os.environ[
         "DATABASE_URL"
     ] = admin_url.render_as_string(
@@ -145,11 +132,11 @@ def configure_admin_database_url(
 # ================================================================
 # 3. CREATE OR UPDATE APPLICATION DATABASE ROLE
 #
-# This operation is idempotent:
+# PostgreSQL CREATE ROLE / ALTER ROLE does not accept a normal
+# bind parameter for the PASSWORD clause.
 #
-# - if ai_ops_user does not exist, create it
-# - if it already exists, update its password so it matches
-#   Secrets Manager
+# sql.Literal() safely quotes the password for PostgreSQL while
+# sql.Identifier() safely quotes the role/database names.
 # ================================================================
 
 def configure_application_role(
@@ -220,6 +207,14 @@ def configure_application_role(
             )
 
 
+            # ----------------------------------------------------
+            # CREATE or UPDATE application role.
+            #
+            # We use sql.Literal() here instead of %s because
+            # PostgreSQL does not support a bind parameter in the
+            # CREATE ROLE / ALTER ROLE PASSWORD clause.
+            # ----------------------------------------------------
+
             if role_exists:
 
                 print(
@@ -232,16 +227,16 @@ def configure_application_role(
                     sql.SQL(
                         """
                         ALTER ROLE {}
-                        WITH LOGIN PASSWORD %s
+                        WITH LOGIN PASSWORD {}
                         """
                     ).format(
                         sql.Identifier(
                             app_user
-                        )
-                    ),
-                    (
-                        app_password,
-                    ),
+                        ),
+                        sql.Literal(
+                            app_password
+                        ),
+                    )
                 )
 
 
@@ -256,21 +251,21 @@ def configure_application_role(
                     sql.SQL(
                         """
                         CREATE ROLE {}
-                        WITH LOGIN PASSWORD %s
+                        WITH LOGIN PASSWORD {}
                         """
                     ).format(
                         sql.Identifier(
                             app_user
-                        )
-                    ),
-                    (
-                        app_password,
-                    ),
+                        ),
+                        sql.Literal(
+                            app_password
+                        ),
+                    )
                 )
 
 
             # ----------------------------------------------------
-            # Allow the application account to connect to the DB.
+            # Allow application user to connect to the database.
             # ----------------------------------------------------
 
             cursor.execute(
@@ -292,7 +287,7 @@ def configure_application_role(
 
 
             # ----------------------------------------------------
-            # Allow access to objects in the public schema.
+            # Allow access to the public schema.
             # ----------------------------------------------------
 
             cursor.execute(
@@ -311,10 +306,7 @@ def configure_application_role(
 
 
             # ----------------------------------------------------
-            # Give the application normal data permissions.
-            #
-            # It can read/write records but is not the database
-            # administrator.
+            # Grant normal application table permissions.
             # ----------------------------------------------------
 
             cursor.execute(
@@ -338,7 +330,7 @@ def configure_application_role(
 
 
             # ----------------------------------------------------
-            # Required for tables that use PostgreSQL sequences.
+            # Grant sequence permissions.
             # ----------------------------------------------------
 
             cursor.execute(
@@ -361,8 +353,8 @@ def configure_application_role(
 
 
             # ----------------------------------------------------
-            # Future tables created by the admin will automatically
-            # receive application permissions.
+            # Future tables created by the administrator should
+            # automatically grant normal application permissions.
             # ----------------------------------------------------
 
             cursor.execute(
@@ -481,7 +473,7 @@ def main():
 
     # ------------------------------------------------------------
     # Step 1:
-    # Configure SQLAlchemy to use the AWS RDS administrator.
+    # Configure SQLAlchemy to connect as the RDS administrator.
     # ------------------------------------------------------------
 
     configure_admin_database_url(
@@ -491,7 +483,7 @@ def main():
 
     # ------------------------------------------------------------
     # Step 2:
-    # Create tables and load our ticket/expense seed data.
+    # Create application tables and seed initial data.
     # ------------------------------------------------------------
 
     seed_application_database()
@@ -499,7 +491,7 @@ def main():
 
     # ------------------------------------------------------------
     # Step 3:
-    # Create the lower-privilege application user and permissions.
+    # Create/configure the lower-privilege application user.
     # ------------------------------------------------------------
 
     configure_application_role(
