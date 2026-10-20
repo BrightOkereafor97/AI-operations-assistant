@@ -1,3 +1,4 @@
+
 # ================================================================
 # APPLICATION CONFIGURATION
 # ================================================================
@@ -17,18 +18,17 @@ MAX_ALLOWED_STEPS = 10
 
 
 # ================================================================
-# CORS
+# CORS CONFIGURATION
+# ================================================================
 #
-# During local development:
+# Allow the local Next.js development frontend and the
+# deployed AWS Amplify frontend to access FastAPI.
 #
-# Next.js  -> localhost:3000
-# FastAPI  -> localhost:8000
-#
-# Later the AWS Amplify frontend domain will be added through
-# environment variables / production configuration.
+# Origins must not end with a trailing slash.
 # ================================================================
 
 ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://production-web.d1c7vj8bsta3cp.amplifyapp.com",
 ]
