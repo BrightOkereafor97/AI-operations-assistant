@@ -350,21 +350,21 @@ export default function Home() {
 
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="min-h-screen min-w-0 bg-slate-950 text-white">
 
-      <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-8">
+      <div className="mx-auto flex min-h-screen w-full min-w-0 max-w-7xl flex-col px-4 py-6 sm:px-6 sm:py-8">
 
         {/* HEADER */}
 
-        <header className="mb-10 flex flex-wrap items-center justify-between gap-6 border-b border-slate-800 pb-6">
+        <header className="mb-6 flex min-w-0 flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-6 sm:mb-10 sm:gap-6">
 
-          <div>
+          <div className="min-w-0">
 
             <p className="mb-2 text-sm font-medium uppercase tracking-[0.25em] text-blue-400">
               AI Operations Assistant
             </p>
 
-            <h1 className="text-3xl font-semibold tracking-tight">
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
               Operations Intelligence
             </h1>
 
@@ -389,15 +389,15 @@ export default function Home() {
         </header>
 
 
-        <section className="grid flex-1 gap-6 lg:grid-cols-[1.5fr_1fr]">
+        <section className="grid min-w-0 flex-1 grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
 
           {/* LEFT */}
 
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-4 sm:space-y-6">
 
             {/* REQUEST */}
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6 shadow-xl">
 
               <h2 className="text-xl font-semibold">
                 Ask the Operations Assistant
@@ -419,13 +419,13 @@ export default function Home() {
                     )
                 }
                 placeholder="Example: Check TKT-003 and tell me what response target applies to its priority."
-                className="mt-6 min-h-40 w-full resize-none rounded-xl border border-slate-700 bg-slate-950 p-4 text-sm text-slate-100 outline-none transition focus:border-blue-500"
+                className="mt-5 min-h-40 w-full min-w-0 resize-y rounded-xl border border-slate-700 bg-slate-950 p-4 text-base text-slate-100 outline-none transition focus:border-blue-500 sm:mt-6 sm:text-sm"
               />
 
 
-              <div className="mt-4 flex items-center justify-between gap-4">
+              <div className="mt-4 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
 
-                <p className="text-xs text-slate-500">
+                <p className="min-w-0 break-all text-xs leading-relaxed text-slate-500">
                   FastAPI endpoint: {
                     API_BASE_URL
                   }
@@ -442,7 +442,7 @@ export default function Home() {
                     ||
                     loading
                   }
-                  className="min-w-32 rounded-xl bg-blue-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+                  className="w-full shrink-0 rounded-xl bg-blue-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400 sm:w-auto sm:min-w-32"
                 >
                   {
                     loading
@@ -483,7 +483,7 @@ export default function Home() {
 
                 <div className="space-y-6">
 
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6">
 
                     <div className="flex flex-wrap items-center justify-between gap-3">
 
@@ -492,7 +492,7 @@ export default function Home() {
                       </h2>
 
 
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
 
                         <span className="rounded-lg bg-slate-800 px-3 py-1 text-xs text-slate-300">
                           {
@@ -516,7 +516,7 @@ export default function Home() {
                     </div>
 
 
-                    <p className="mt-5 whitespace-pre-wrap text-sm leading-7 text-slate-200">
+                    <p className="mt-5 whitespace-pre-wrap break-words text-sm leading-7 text-slate-200">
                       {
                         response.final_answer
                         ??
@@ -527,7 +527,7 @@ export default function Home() {
                   </div>
 
 
-                  <div className="grid gap-4 sm:grid-cols-3">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4">
 
                     <MetricCard
                       label="Steps"
@@ -609,7 +609,7 @@ export default function Home() {
                   }
 
 
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6">
 
                     <details>
 
@@ -617,7 +617,7 @@ export default function Home() {
                         Full agent debug state
                       </summary>
 
-                      <pre className="mt-4 max-h-[500px] overflow-auto rounded-xl bg-slate-950 p-4 text-xs leading-6 text-slate-300">
+                      <pre className="mt-4 max-h-[500px] max-w-full overflow-auto rounded-xl bg-slate-950 p-3 text-xs leading-6 text-slate-300 sm:p-4">
                         {
                           JSON.stringify(
                             response.full_state,
@@ -661,11 +661,11 @@ export default function Home() {
 
           {/* RIGHT */}
 
-          <aside className="space-y-6">
+          <aside className="min-w-0 space-y-4 sm:space-y-6">
 
             {/* REAL SYSTEM STATUS */}
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6">
 
               <div className="flex items-center justify-between">
 
@@ -761,7 +761,7 @@ export default function Home() {
 
             {/* EXAMPLES */}
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6">
 
               <h2 className="text-lg font-semibold">
                 Example requests
@@ -824,7 +824,7 @@ export default function Home() {
               &&
               (
 
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+                <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6">
 
                   <h2 className="text-lg font-semibold">
                     Tool execution
@@ -924,7 +924,7 @@ export default function Home() {
               &&
               (
 
-                <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+                <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6">
 
                   <details>
 
@@ -960,7 +960,7 @@ export default function Home() {
                               </p>
 
 
-                              <pre className="mt-3 max-h-72 overflow-auto whitespace-pre-wrap text-xs leading-6 text-slate-400">
+                              <pre className="mt-3 max-h-72 max-w-full overflow-auto whitespace-pre-wrap break-all text-xs leading-6 text-slate-400">
                                 {
                                   formatJson(
                                     toolResult.result
@@ -1134,7 +1134,7 @@ function KnowledgeEvidencePanel({
 
 
   return (
-    <div className="rounded-2xl border border-blue-900 bg-blue-950/20 p-6">
+    <div className="rounded-2xl border border-blue-900 bg-blue-950/20 p-4 sm:p-6">
 
       <div className="flex flex-wrap items-center justify-between gap-3">
 
@@ -1333,7 +1333,7 @@ function ExampleButton({
       onClick={
         onClick
       }
-      className="w-full rounded-xl border border-slate-800 bg-slate-950 p-3 text-left text-sm text-slate-300 transition hover:border-slate-600"
+      className="min-h-11 w-full break-words rounded-xl border border-slate-800 bg-slate-950 p-3 text-left text-sm text-slate-300 transition hover:border-slate-600"
     >
       {text}
     </button>
@@ -1350,9 +1350,9 @@ function MetricCard({
 }) {
 
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
+    <div className="min-w-0 rounded-xl border border-slate-800 bg-slate-950 p-3 sm:p-4">
 
-      <p className="text-xs uppercase tracking-wider text-slate-500">
+      <p className="break-words text-[11px] uppercase tracking-wider text-slate-500 sm:text-xs">
         {label}
       </p>
 
